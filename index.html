@@ -80,6 +80,21 @@ textarea{resize:vertical;min-height:64px}
 .toggle-padrao.on{background:#e8f0fe;border-color:#aec6f6;color:#1a5296}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .section-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+
+.pit-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap}
+.pit-row:last-child{border-bottom:none}
+.pit-row:hover{background:#fafafa}
+.pit-entrega{flex:1;min-width:180px;font-size:13px;color:#1a1a1a}
+.pit-tipo-btn{font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#555;white-space:nowrap;transition:all 0.15s}
+.pit-tipo-btn.fixa{background:#e8f0fe;border-color:#aec6f6;color:#1a5296}
+.pit-tipo-btn.variavel{background:#f1f8e9;border-color:#c8e6c9;color:#2e7d32}
+.pit-input{width:72px;padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;text-align:center}
+.pit-input:focus{outline:none;border-color:#2E75B6}
+.pit-input:disabled{background:#f5f5f5;color:#aaa;cursor:not-allowed}
+.pit-calc{width:72px;text-align:center;font-size:13px;font-weight:600;color:#2e7d32;padding:6px 0}
+.pit-bar{flex:1;min-width:80px;height:6px;background:#eee;border-radius:3px;overflow:hidden}
+.pit-bar-fill{height:100%;border-radius:3px;background:#2E75B6;transition:width 0.3s}
+
 @media(max-width:500px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat .n{font-size:20px}.config-tipo-header{flex-direction:column;align-items:flex-start;gap:8px}}
 </style>
 </head>
@@ -93,6 +108,7 @@ textarea{resize:vertical;min-height:64px}
     <button class="tab active" onclick="showTab('registro',this)">Novo registro</button>
     <button class="tab" onclick="showTab('historico',this)">Historico</button>
     <button class="tab" onclick="showTab('config',this)">Configuracoes</button>
+    <button class="tab" onclick="showTab('pit',this)">Planejar PIT</button>
   </div>
 
   <div id="registro" class="section active">
@@ -134,6 +150,47 @@ textarea{resize:vertical;min-height:64px}
     <p style="font-size:13px;color:#666;margin-bottom:16px">Clique em um tipo para expandir e editar suas atividades.</p>
     <div id="config-lista"></div>
   </div>
+  <div id="pit" class="section">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1F3864">Planejamento de Horas — PIT</div>
+          <div style="font-size:12px;color:#888;margin-top:2px">Informe o total de horas e distribua entre as entregas</div>
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:4px">
+        <div class="field">
+          <label>Total de horas do mes</label>
+          <input type="number" id="pit-total" placeholder="Ex: 176" min="1" max="300" oninput="pitCalcular()">
+        </div>
+        <div class="field">
+          <label>Horas ja distribuidas</label>
+          <div style="padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;background:#f9f9f9;color:#555" id="pit-usadas">0h de 0h</div>
+        </div>
+      </div>
+      <div id="pit-alerta" style="display:none;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px"></div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 16px;background:#f5f6f8;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:700;color:#1F3864">Entregas do PIT</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:#888">Fixas sao distribuidas primeiro. O restante vai para as variaveis.</span>
+        </div>
+      </div>
+      <div id="pit-lista"></div>
+    </div>
+
+    <div class="card" id="pit-resultado" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:14px;font-weight:700;color:#1F3864">Resultado — copie para o SUAP</div>
+        <button class="btn-sm success" onclick="pitCopiar()">Copiar tudo</button>
+      </div>
+      <div id="pit-resultado-texto" style="background:#f5f6f8;border-radius:8px;padding:14px;font-size:13px;line-height:2;font-family:monospace;white-space:pre-wrap;border:1px solid #e0e0e0"></div>
+      <p style="font-size:11px;color:#aaa;margin-top:8px">Copie cada valor e cole no campo de horas correspondente no SUAP.</p>
+    </div>
+  </div>
+
 </div>
 
 <div class="overlay" id="edit-modal">
@@ -268,6 +325,7 @@ function showTab(t,btn){
   document.getElementById(t).classList.add('active');btn.classList.add('active');
   if(t==='historico')renderHistorico();
   if(t==='config')renderConfig();
+  if(t==='pit')pitRenderLista();
 }
 
 function onTipoChange(){
@@ -455,6 +513,103 @@ function excluirTipo(ci){
 }
 
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
+
+
+var pitEntregas = JSON.parse(localStorage.getItem('cofin_pit')||'null') || [
+  {titulo:"Atendimento aos campi e setores quanto a orientacoes tecnicas", tipo:"variavel", horas:7, peso:2},
+  {titulo:"Atendimento aos fornecedores quanto aos pagamentos", tipo:"fixa", horas:2, peso:1},
+  {titulo:"Atendimento e/ou solicitacao de atendimento as determinacoes e demandas de orgaos externos", tipo:"fixa", horas:2, peso:1},
+  {titulo:"Atividades referentes a Liquidacao de Despesas", tipo:"variavel", horas:30, peso:5},
+  {titulo:"Atividades referentes a liquidacao e pagamento de despesas da folha de pagamento de pessoal", tipo:"fixa", horas:18, peso:1},
+  {titulo:"Atividades referentes ao Pagamento de Despesas", tipo:"variavel", horas:55, peso:6},
+  {titulo:"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao", tipo:"variavel", horas:5, peso:2},
+  {titulo:"Controle, acompanhamento recursos especificos, TED, emenda por liquidacao/pagamento", tipo:"variavel", horas:4, peso:2},
+  {titulo:"Cumprimento de obrigacoes tributarias (SEFIP/GFIP, PIS/PASEP, FGTS, DARF, ISS, EFD-Reinf, eSocial, DCTFweb)", tipo:"variavel", horas:5, peso:2},
+  {titulo:"Elaboracao e revisao de fluxos de processos, manuais e procedimentos", tipo:"fixa", horas:3, peso:1},
+  {titulo:"Envio de demandas (liquidacao e pagamento) para os campi", tipo:"variavel", horas:33, peso:5},
+  {titulo:"Envio de IRRF aos fornecedores e colaboradores externos", tipo:"fixa", horas:2, peso:1},
+  {titulo:"Gestao de Recursos Financeiros", tipo:"variavel", horas:4, peso:2},
+  {titulo:"Participacao em atividades", tipo:"variavel", horas:4, peso:2},
+  {titulo:"Regularizacao de pagamento (OBs canceladas)", tipo:"fixa", horas:2, peso:1}
+];
+
+function salvarPit(){localStorage.setItem('cofin_pit',JSON.stringify(pitEntregas));}
+
+function pitRenderLista(){
+  var total = parseFloat(document.getElementById('pit-total').value)||0;
+  var fixaTotal = pitEntregas.filter(function(e){return e.tipo==='fixa';}).reduce(function(s,e){return s+e.horas;},0);
+  var varPool = total - fixaTotal;
+  var varPeso = pitEntregas.filter(function(e){return e.tipo==='variavel';}).reduce(function(s,e){return s+e.peso;},0);
+
+  var html = pitEntregas.map(function(e,i){
+    var calc = 0;
+    if(e.tipo==='fixa'){
+      calc = e.horas;
+    } else {
+      calc = varPool>0 && varPeso>0 ? Math.round((e.peso/varPeso)*varPool) : 0;
+    }
+    var pct = total>0 ? Math.min(100,Math.round((calc/total)*100)) : 0;
+    return '<div class="pit-row">'
+      +'<div class="pit-entrega">'+e.titulo+'</div>'
+      +'<button class="pit-tipo-btn '+e.tipo+'" onclick="pitToggleTipo('+i+')">'+(e.tipo==='fixa'?'Fixa':'Variavel')+'</button>'
+      +(e.tipo==='fixa'
+        ? '<input class="pit-input" type="number" min="0" max="999" value="'+e.horas+'" onchange="pitSetHoras('+i+',this.value)" title="Horas fixas">'
+        : '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:#aaa">Peso</span><input class="pit-input" type="number" min="1" max="10" value="'+e.peso+'" onchange="pitSetPeso('+i+',this.value)" title="Peso relativo" style="width:52px"></div>')
+      +'<div class="pit-calc" style="color:'+(e.tipo==='fixa'?'#1a5296':'#2e7d32')+'">'+calc+'h</div>'
+      +'<div class="pit-bar"><div class="pit-bar-fill" style="width:'+pct+'%"></div></div>'
+      +'</div>';
+  }).join('');
+  document.getElementById('pit-lista').innerHTML = html;
+  pitAtualizarTotais(total, fixaTotal, varPool);
+  pitMostrarResultado(total);
+}
+
+function pitAtualizarTotais(total, fixaTotal, varPool){
+  var usadas = total>0 ? total : 0;
+  document.getElementById('pit-usadas').textContent = total+'h previstas  •  '+fixaTotal+'h fixas  •  '+(varPool>0?varPool:0)+'h variaveis';
+  var alerta = document.getElementById('pit-alerta');
+  if(total>0 && varPool<0){
+    alerta.style.display='block';
+    alerta.style.background='#fff3e0';alerta.style.border='1px solid #ffe0b2';alerta.style.color='#e65100';
+    alerta.textContent='Atencao: as horas fixas ('+fixaTotal+'h) superam o total informado ('+total+'h). Reduza as horas fixas ou aumente o total.';
+  } else { alerta.style.display='none'; }
+}
+
+function pitMostrarResultado(total){
+  if(!total){document.getElementById('pit-resultado').style.display='none';return;}
+  var fixaTotal=pitEntregas.filter(function(e){return e.tipo==='fixa';}).reduce(function(s,e){return s+e.horas;},0);
+  var varPool=total-fixaTotal;
+  var varPeso=pitEntregas.filter(function(e){return e.tipo==='variavel';}).reduce(function(s,e){return s+e.peso;},0);
+  var linhas=pitEntregas.map(function(e){
+    var h = e.tipo==='fixa' ? e.horas : (varPool>0&&varPeso>0?Math.round((e.peso/varPeso)*varPool):0);
+    return e.titulo+': '+h+'h';
+  });
+  document.getElementById('pit-resultado').style.display='block';
+  document.getElementById('pit-resultado-texto').textContent=linhas.join('
+');
+}
+
+function pitCalcular(){pitRenderLista();}
+
+function pitToggleTipo(i){
+  pitEntregas[i].tipo = pitEntregas[i].tipo==='fixa'?'variavel':'fixa';
+  salvarPit();pitRenderLista();
+}
+
+function pitSetHoras(i,v){
+  pitEntregas[i].horas=Math.max(0,parseInt(v)||0);
+  salvarPit();pitRenderLista();
+}
+
+function pitSetPeso(i,v){
+  pitEntregas[i].peso=Math.max(1,parseInt(v)||1);
+  salvarPit();pitRenderLista();
+}
+
+function pitCopiar(){
+  var t=document.getElementById('pit-resultado-texto').textContent;
+  navigator.clipboard.writeText(t).then(function(){showToast('Copiado para a area de transferencia!');}).catch(function(){showToast('Selecione o texto e copie manualmente.');});
+}
 
 init();
 </script>
