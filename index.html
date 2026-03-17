@@ -5,79 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>COFIN — Registro de Atividades PGD</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;background:#f5f6f8;color:#1a1a1a;min-height:100vh}
-  header{background:#1F3864;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
-  header h1{font-size:16px;font-weight:600}
-  header span{font-size:12px;opacity:0.7}
-  .container{max-width:780px;margin:0 auto;padding:20px 16px}
-  .tabs{display:flex;gap:2px;background:#e8eaed;border-radius:10px;padding:3px;margin-bottom:20px}
-  .tab{flex:1;padding:8px;text-align:center;cursor:pointer;border-radius:8px;font-size:13px;font-weight:500;color:#555;border:none;background:none}
-  .tab.active{background:#fff;color:#1F3864;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
-  .section{display:none}.section.active{display:block}
-  .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-  .field{margin-bottom:14px}
-  label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
-  input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;background:#fff;color:#1a1a1a;font-family:inherit;transition:border-color 0.2s}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:#2E75B6}
-  textarea{resize:vertical;min-height:64px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .atividades-box{border:1.5px solid #e8eaed;border-radius:8px;overflow:hidden}
-  .atv-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background 0.15s}
-  .atv-item:last-child{border-bottom:none}
-  .atv-item:hover{background:#f8f9ff}
-  .atv-item input[type=checkbox]{width:16px;height:16px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#2E75B6}
-  .atv-item .atv-label{font-size:13px;line-height:1.4;flex:1;cursor:pointer}
-  .atv-item.padrao .atv-label{font-weight:500}
-  .badge-padrao{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;background:#e8f0fe;color:#1a5296;font-weight:600;vertical-align:middle}
-  .sistemas-box{margin-top:10px;padding:10px 12px;background:#f0faf4;border-radius:8px;font-size:12px;color:#2d6a4f;border:1px solid #b7e4c7;font-weight:500}
-  .hint{font-size:11px;color:#888;margin-top:5px}
-  .btn-primary{width:100%;padding:12px;background:#1F3864;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;transition:background 0.2s}
-  .btn-primary:hover{background:#2E75B6}
-  .btn-secondary{padding:7px 14px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;color:#333;font-weight:500}
-  .btn-secondary:hover{background:#f5f5f5}
-  .btn-danger{padding:7px 14px;background:#fff;border:1.5px solid #ffcdd2;border-radius:8px;font-size:13px;cursor:pointer;color:#c62828;font-weight:500}
-  .btn-danger:hover{background:#fff5f5}
-  .btn-export{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;color:#333;font-weight:500;margin-bottom:16px;transition:background 0.2s}
-  .btn-export:hover{background:#f5f5f5}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-  .stat{background:#fff;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
-  .stat .n{font-size:26px;font-weight:700;color:#1F3864}
-  .stat .l{font-size:11px;color:#888;margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
-  .empty{text-align:center;padding:40px 20px;color:#aaa;font-size:13px}
-  .empty svg{margin-bottom:12px;opacity:0.3}
-  .reg-card{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.07);border-left:3px solid #2E75B6}
-  .reg-card .tipo{font-size:11px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
-  .reg-card .proc{font-size:14px;font-weight:600;color:#1a1a1a}
-  .reg-card .ativs{font-size:12px;color:#555;margin-top:5px;line-height:1.6}
-  .reg-card .meta{font-size:11px;color:#999;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
-  .reg-card .acoes{display:flex;gap:6px;margin-top:10px}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:16px}
-  .overlay.open{display:flex}
-  .modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-  .modal-title{font-size:16px;font-weight:700;margin-bottom:16px;color:#1F3864}
-  .modal-footer{display:flex;gap:8px;margin-top:14px}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;white-space:nowrap}
-  .toast.show{opacity:1}
-  .config-tipo{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
-  .config-tipo h3{font-size:13px;font-weight:700;color:#1F3864;margin-bottom:4px}
-  .config-tipo .sis{font-size:11px;color:#888;margin-bottom:10px}
-  .config-atv{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
-  .config-atv:last-child{border-bottom:none}
-  .config-atv input{width:15px;height:15px;accent-color:#2E75B6;flex-shrink:0}
-  .config-atv span{flex:1}
-  .config-atv em{font-size:10px;color:#aaa;font-style:normal}
-  .section-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px}
-  @media(max-width:500px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat .n{font-size:20px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;background:#f5f6f8;color:#1a1a1a;min-height:100vh}
+header{background:#1F3864;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:16px;font-weight:600}
+header span{font-size:12px;opacity:0.7}
+.container{max-width:780px;margin:0 auto;padding:20px 16px}
+.tabs{display:flex;gap:2px;background:#e8eaed;border-radius:10px;padding:3px;margin-bottom:20px}
+.tab{flex:1;padding:8px;text-align:center;cursor:pointer;border-radius:8px;font-size:13px;font-weight:500;color:#555;border:none;background:none}
+.tab.active{background:#fff;color:#1F3864;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;background:#fff;color:#1a1a1a;font-family:inherit;transition:border-color 0.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#2E75B6}
+textarea{resize:vertical;min-height:64px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.atividades-box{border:1.5px solid #e8eaed;border-radius:8px;overflow:hidden}
+.atv-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid #f0f0f0;transition:background 0.15s}
+.atv-item:last-child{border-bottom:none}
+.atv-item:hover{background:#f8f9ff}
+.atv-item input[type=checkbox]{width:16px;height:16px;margin-top:1px;cursor:pointer;flex-shrink:0;accent-color:#2E75B6}
+.atv-item .atv-label{font-size:13px;line-height:1.4;flex:1;cursor:pointer}
+.atv-item.padrao .atv-label{font-weight:500}
+.badge-padrao{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px;background:#e8f0fe;color:#1a5296;font-weight:600;vertical-align:middle}
+.sistemas-box{margin-top:10px;padding:10px 12px;background:#f0faf4;border-radius:8px;font-size:12px;color:#2d6a4f;border:1px solid #b7e4c7;font-weight:500}
+.hint{font-size:11px;color:#888;margin-top:5px}
+.btn-primary{width:100%;padding:12px;background:#1F3864;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;transition:background 0.2s}
+.btn-primary:hover{background:#2E75B6}
+.btn-sm{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500;border:1.5px solid #ddd;background:#fff;color:#333;white-space:nowrap}
+.btn-sm:hover{background:#f5f5f5}
+.btn-sm.danger{border-color:#ffcdd2;color:#c62828}
+.btn-sm.danger:hover{background:#fff5f5}
+.btn-sm.success{border-color:#c8e6c9;color:#2e7d32;background:#f1f8e9}
+.btn-sm.success:hover{background:#e8f5e9}
+.btn-secondary{padding:7px 14px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;color:#333;font-weight:500}
+.btn-secondary:hover{background:#f5f5f5}
+.btn-export{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;color:#333;font-weight:500;margin-bottom:16px}
+.btn-export:hover{background:#f5f5f5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:#fff;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
+.stat .n{font-size:26px;font-weight:700;color:#1F3864}
+.stat .l{font-size:11px;color:#888;margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
+.empty{text-align:center;padding:40px 20px;color:#aaa;font-size:13px}
+.reg-card{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.07);border-left:3px solid #2E75B6}
+.reg-card .tipo{font-size:11px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.reg-card .proc{font-size:14px;font-weight:600;color:#1a1a1a}
+.reg-card .ativs{font-size:12px;color:#555;margin-top:5px;line-height:1.6}
+.reg-card .meta{font-size:11px;color:#999;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+.reg-card .acoes{display:flex;gap:6px;margin-top:10px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;color:#1F3864}
+.modal-footer{display:flex;gap:8px;margin-top:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+.config-tipo{background:#fff;border-radius:10px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.07);overflow:hidden}
+.config-tipo-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid #f0f0f0}
+.config-tipo-header:hover{background:#fafafa}
+.config-tipo-title{font-size:13px;font-weight:700;color:#1F3864}
+.config-tipo-meta{font-size:11px;color:#aaa;margin-top:2px}
+.config-tipo-body{padding:12px 16px;display:none}
+.config-tipo-body.open{display:block}
+.config-atv-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5;flex-wrap:wrap}
+.config-atv-row:last-child{border-bottom:none}
+.config-atv-row input[type=checkbox]{width:15px;height:15px;accent-color:#2E75B6;flex-shrink:0;cursor:pointer}
+.config-atv-texto{flex:1;font-size:13px;color:#1a1a1a;min-width:120px}
+.config-atv-tipo{font-size:10px;color:#aaa;min-width:42px;text-align:right}
+.add-atv-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;align-items:center;flex-wrap:wrap}
+.add-atv-row input{flex:1;min-width:140px;padding:7px 10px;font-size:13px}
+.toggle-padrao{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#555;white-space:nowrap}
+.toggle-padrao.on{background:#e8f0fe;border-color:#aec6f6;color:#1a5296}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+@media(max-width:500px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat .n{font-size:20px}.config-tipo-header{flex-direction:column;align-items:flex-start;gap:8px}}
 </style>
 </head>
 <body>
-
 <header>
   <h1>COFIN — Registro de Atividades</h1>
   <span>Teletrabalho PGD</span>
 </header>
-
 <div class="container">
   <div class="tabs">
     <button class="tab active" onclick="showTab('registro',this)">Novo registro</button>
@@ -85,28 +95,16 @@
     <button class="tab" onclick="showTab('config',this)">Configuracoes</button>
   </div>
 
-  <!-- REGISTRO -->
   <div id="registro" class="section active">
     <div class="card">
       <div class="row">
-        <div class="field">
-          <label>Processo SEI</label>
-          <input type="text" id="sei" placeholder="Ex: 23244.004463/2024-69">
-        </div>
-        <div class="field">
-          <label>Data</label>
-          <input type="date" id="data">
-        </div>
+        <div class="field"><label>Processo SEI</label><input type="text" id="sei" placeholder="Ex: 23244.004463/2024-69"></div>
+        <div class="field"><label>Data</label><input type="date" id="data"></div>
       </div>
-      <div class="field">
-        <label>Tipo de demanda</label>
-        <select id="tipo" onchange="onTipoChange()">
-          <option value="">— Selecione o tipo —</option>
-        </select>
-      </div>
+      <div class="field"><label>Tipo de demanda</label><select id="tipo" onchange="onTipoChange()"><option value="">— Selecione o tipo —</option></select></div>
       <div class="field" id="ativs-field" style="display:none">
         <label>Atividades realizadas</label>
-        <p class="hint" style="margin-bottom:8px">As marcadas sao o padrao do tipo. Desmarque o que nao fez ou marque o que fez a mais.</p>
+        <p class="hint" style="margin-bottom:8px">As marcadas sao o padrao. Desmarque o que nao fez ou marque o que fez a mais.</p>
         <div class="atividades-box" id="ativs-list"></div>
         <div id="sistemas-box" class="sistemas-box" style="display:none"></div>
       </div>
@@ -114,15 +112,11 @@
         <label>Complemento <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
         <textarea id="complemento" placeholder="Acrescente algo que nao esta na lista acima..."></textarea>
       </div>
-      <div class="field">
-        <label>Detalhes / Documento gerado</label>
-        <input type="text" id="detalhes" placeholder="Ex: Despacho COFIN SEI n 1304283, NP163, RP55...">
-      </div>
+      <div class="field"><label>Detalhes / Documento gerado</label><input type="text" id="detalhes" placeholder="Ex: Despacho COFIN SEI n 1304283, NP163..."></div>
       <button class="btn-primary" onclick="salvarRegistro()">Salvar registro</button>
     </div>
   </div>
 
-  <!-- HISTORICO -->
   <div id="historico" class="section">
     <div class="stats" id="stats"></div>
     <button class="btn-export" onclick="exportarCSV()">
@@ -132,15 +126,16 @@
     <div id="lista-registros"></div>
   </div>
 
-  <!-- CONFIG -->
   <div id="config" class="section">
-    <p class="section-title">Atividades por tipo de demanda</p>
-    <p style="font-size:13px;color:#666;margin-bottom:16px">Marque quais atividades aparecem pre-selecionadas (padrao) para cada tipo de demanda.</p>
+    <div class="section-header">
+      <span class="section-title">Tipos de demanda</span>
+      <button class="btn-sm success" onclick="abrirModalNovoTipo()">+ Novo tipo</button>
+    </div>
+    <p style="font-size:13px;color:#666;margin-bottom:16px">Clique em um tipo para expandir e editar suas atividades.</p>
     <div id="config-lista"></div>
   </div>
 </div>
 
-<!-- MODAL EDITAR -->
 <div class="overlay" id="edit-modal">
   <div class="modal">
     <p class="modal-title">Editar registro</p>
@@ -149,10 +144,40 @@
     <div class="field"><label>Tipo de demanda</label><input type="text" id="e-tipo"></div>
     <div class="field"><label>Atividades realizadas</label><textarea id="e-ativs" style="min-height:90px"></textarea></div>
     <div class="field"><label>Sistemas utilizados</label><input type="text" id="e-sistemas"></div>
-    <div class="field"><label>Detalhes / Documento gerado</label><input type="text" id="e-detalhes"></div>
+    <div class="field"><label>Detalhes</label><input type="text" id="e-detalhes"></div>
     <div class="modal-footer">
-      <button class="btn-primary" style="flex:1" onclick="salvarEdicao()">Salvar alteracoes</button>
-      <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-primary" style="flex:1" onclick="salvarEdicao()">Salvar</button>
+      <button class="btn-secondary" onclick="fecharModal('edit-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="atv-modal">
+  <div class="modal">
+    <p class="modal-title">Editar atividade</p>
+    <div class="field"><label>Texto da atividade</label><input type="text" id="atv-texto"></div>
+    <div class="field">
+      <label>Tipo</label>
+      <div style="display:flex;gap:16px;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:400;font-size:13px;cursor:pointer"><input type="radio" name="atv-tipo" id="atv-r-padrao" value="padrao"> Padrao (ja vem marcada)</label>
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-weight:400;font-size:13px;cursor:pointer"><input type="radio" name="atv-tipo" id="atv-r-opcional" value="opcional"> Opcional</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" style="flex:1" onclick="salvarAtvEdicao()">Salvar</button>
+      <button class="btn-secondary" onclick="fecharModal('atv-modal')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="tipo-modal">
+  <div class="modal">
+    <p class="modal-title" id="tipo-modal-title">Novo tipo de demanda</p>
+    <div class="field"><label>Nome do tipo</label><input type="text" id="nt-nome" placeholder="Ex: Liquidacao de Diarias"></div>
+    <div class="field"><label>Sistemas utilizados</label><input type="text" id="nt-sistemas" placeholder="Ex: SIAFI; SEI"></div>
+    <div class="modal-footer">
+      <button class="btn-primary" style="flex:1" onclick="salvarTipo()">Salvar</button>
+      <button class="btn-secondary" onclick="fecharModal('tipo-modal')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -160,344 +185,276 @@
 <div class="toast" id="toast"></div>
 
 <script>
-var config = [
+var CONFIG_KEY='cofin_config', REG_KEY='cofin_reg';
+var defaultConfig=[
   {tipo:"Liquidacao da NF/FAT",sistemas:"SICAF; SEI; SIAFI; Planilha REINF",atividades:[
-    {texto:"Consulta do SICAF",padrao:true},
-    {texto:"Consulta do Simples Nacional",padrao:true},
-    {texto:"Aprovacao da NF no Contratos",padrao:true},
-    {texto:"Despacho da NS para COERG",padrao:true},
-    {texto:"Lancamento de encargo no drive REINF",padrao:true},
-    {texto:"Conferencia do despacho para liquidacao",padrao:false}
-  ]},
+    {texto:"Consulta do SICAF",padrao:true},{texto:"Consulta do Simples Nacional",padrao:true},
+    {texto:"Aprovacao da NF no Contratos",padrao:true},{texto:"Despacho da NS para COERG",padrao:true},
+    {texto:"Lancamento de encargo no drive REINF",padrao:true},{texto:"Conferencia do despacho para liquidacao",padrao:false}]},
   {tipo:"Pagamento da NF/FAT",sistemas:"SEI; SIAFI; Planilha REINF",atividades:[
-    {texto:"Conferencia do despacho decisorio",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Pagamento da liquidacao",padrao:true},
-    {texto:"Lancamento no drive REINF",padrao:true},
-    {texto:"Despacho da OB para COERG",padrao:true},
-    {texto:"Geracao da Guia do ISS",padrao:false},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}
-  ]},
+    {texto:"Conferencia do despacho decisorio",padrao:true},{texto:"Conferencia da liquidacao",padrao:true},
+    {texto:"Pagamento da liquidacao",padrao:true},{texto:"Lancamento no drive REINF",padrao:true},
+    {texto:"Despacho da OB para COERG",padrao:true},{texto:"Geracao da Guia do ISS",padrao:false},
+    {texto:"Consulta de recurso TED/Emenda",padrao:false}]},
   {tipo:"Liquidacao de Bolsas (DSAES)",sistemas:"SIAFI; SEI; Planilha",atividades:[
     {texto:"Verificacao dos beneficiarios e lista de credores",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Despacho da NS para COERG",padrao:true},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}
-  ]},
+    {texto:"Conferencia da liquidacao",padrao:true},{texto:"Despacho da NS para COERG",padrao:true},
+    {texto:"Consulta de recurso TED/Emenda",padrao:false}]},
   {tipo:"Pagamento de Bolsas",sistemas:"SIAFI; SEI; E-mail",atividades:[
     {texto:"Confirmacao da lista de beneficiarios e LCs",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Fechamento das LCs",padrao:true},
-    {texto:"Pagamento da liquidacao",padrao:true},
-    {texto:"Despacho da OB para COERG",padrao:true},
-    {texto:"Informe por e-mail ao demandante",padrao:false},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}
-  ]},
+    {texto:"Conferencia da liquidacao",padrao:true},{texto:"Fechamento das LCs",padrao:true},
+    {texto:"Pagamento da liquidacao",padrao:true},{texto:"Despacho da OB para COERG",padrao:true},
+    {texto:"Informe por e-mail ao demandante",padrao:false},{texto:"Consulta de recurso TED/Emenda",padrao:false}]},
   {tipo:"Despacho de liquidacao",sistemas:"SEI",atividades:[
-    {texto:"Conferencia da descricao do despacho e links",padrao:true},
-    {texto:"Encaminhamento para COERG",padrao:true}
-  ]},
+    {texto:"Conferencia da descricao do despacho e links",padrao:true},{texto:"Encaminhamento para COERG",padrao:true}]},
   {tipo:"Despacho de pagamento",sistemas:"SEI; Planilha REINF",atividades:[
     {texto:"Conferencia dos comprovantes de pagamento",padrao:true},
-    {texto:"Conferencia se foi lancado na planilha REINF",padrao:true},
-    {texto:"Encaminhamento para COERG",padrao:true}
-  ]},
+    {texto:"Conferencia se foi lancado na planilha REINF",padrao:true},{texto:"Encaminhamento para COERG",padrao:true}]},
   {tipo:"Demanda para o Campus",sistemas:"SEI; Planilha",atividades:[
-    {texto:"Conferencia do despacho decisorio",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
+    {texto:"Conferencia do despacho decisorio",padrao:true},{texto:"Conferencia da liquidacao",padrao:true},
     {texto:"Preenchimento da planilha de acompanhamento",padrao:true},
-    {texto:"Despacho autorizando pagamento para o campus",padrao:true}
-  ]},
+    {texto:"Despacho autorizando pagamento para o campus",padrao:true}]},
   {tipo:"Liquidacao da folha de pessoal",sistemas:"SIAFI; Planilha",atividades:[
     {texto:"Preenchimento da planilha pre-lancamento SIAFI",padrao:true},
-    {texto:"Solicitacao de recurso financeiro da folha no SIAFI",padrao:true}
-  ]},
+    {texto:"Solicitacao de recurso financeiro da folha no SIAFI",padrao:true}]},
   {tipo:"Pagamento da folha de pessoal",sistemas:"SIAFI; SEI",atividades:[
     {texto:"Consulta da liberacao do recurso financeiro",padrao:true},
-    {texto:"Anexo dos comprovantes de pagamento",padrao:true},
-    {texto:"Despacho das OBs para COERG",padrao:true}
-  ]},
-  {tipo:"Liquidacao PCDP",sistemas:"SIAFI; SEI",atividades:[
-    {texto:"Conferencia e liquidacao das PCDPs no SIAFI",padrao:true}
-  ]},
-  {tipo:"Pagamento PCDP",sistemas:"SIAFI; SEI",atividades:[
-    {texto:"Conferencia e pagamento das PCDPs no SIAFI",padrao:true}
-  ]},
+    {texto:"Anexo dos comprovantes de pagamento",padrao:true},{texto:"Despacho das OBs para COERG",padrao:true}]},
+  {tipo:"Liquidacao PCDP",sistemas:"SIAFI; SEI",atividades:[{texto:"Conferencia e liquidacao das PCDPs no SIAFI",padrao:true}]},
+  {tipo:"Pagamento PCDP",sistemas:"SIAFI; SEI",atividades:[{texto:"Conferencia e pagamento das PCDPs no SIAFI",padrao:true}]},
   {tipo:"Regularizacao de pagamento (OBs canceladas)",sistemas:"SIAFI; E-mail",atividades:[
-    {texto:"Consulta das OBs canceladas",padrao:true},
-    {texto:"Preenchimento de planilha das OBs",padrao:true},
-    {texto:"Emissao de lista de credores",padrao:true},
-    {texto:"E-mail de consulta",padrao:false},
-    {texto:"Regularizacao",padrao:false}
-  ]},
+    {texto:"Consulta das OBs canceladas",padrao:true},{texto:"Preenchimento de planilha das OBs",padrao:true},
+    {texto:"Emissao de lista de credores",padrao:true},{texto:"E-mail de consulta",padrao:false},{texto:"Regularizacao",padrao:false}]},
   {tipo:"Atendimento aos campi e setores",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
-    {texto:"Orientacao tecnica por e-mail",padrao:true},
-    {texto:"Orientacao tecnica por WhatsApp",padrao:false},
-    {texto:"Solicitacao de correcao de NP/RP",padrao:false}
-  ]},
+    {texto:"Orientacao tecnica por e-mail",padrao:true},{texto:"Orientacao tecnica por WhatsApp",padrao:false},
+    {texto:"Solicitacao de correcao de NP/RP",padrao:false}]},
   {tipo:"Atendimento aos fornecedores",sistemas:"E-mail; WhatsApp Institucional",atividades:[
-    {texto:"Atendimento sobre pagamento pendente",padrao:true},
-    {texto:"Esclarecimento de retencoes tributarias",padrao:false}
-  ]},
+    {texto:"Atendimento sobre pagamento pendente",padrao:true},{texto:"Esclarecimento de retencoes tributarias",padrao:false}]},
   {tipo:"Cumprimento de obrigacoes tributarias",sistemas:"SIAFI; SEFIP; DCTFWeb; eSocial",atividades:[
-    {texto:"Emissao de DARF",padrao:false},
-    {texto:"Lancamento no SEFIP/GFIP",padrao:false},
-    {texto:"Lancamento no EFD-Reinf / DCTFWeb",padrao:false},
-    {texto:"Envio de IRRF ao fornecedor ou colaborador",padrao:false}
-  ]},
+    {texto:"Emissao de DARF",padrao:false},{texto:"Lancamento no SEFIP/GFIP",padrao:false},
+    {texto:"Lancamento no EFD-Reinf / DCTFWeb",padrao:false},{texto:"Envio de IRRF ao fornecedor ou colaborador",padrao:false}]},
   {tipo:"Auxilio a DIRCF - Assuntos Diversos",sistemas:"SEI; Tesouro Gerencial; Trello",atividades:[
-    {texto:"Elaboracao de despacho",padrao:false},
-    {texto:"Emissao de relatorio",padrao:false},
-    {texto:"Registro no Trello",padrao:false},
-    {texto:"Preenchimento de planilha",padrao:false}
-  ]},
+    {texto:"Elaboracao de despacho",padrao:false},{texto:"Emissao de relatorio",padrao:false},
+    {texto:"Registro no Trello",padrao:false},{texto:"Preenchimento de planilha",padrao:false}]},
   {tipo:"Controle recursos especificos (TED/Emenda)",sistemas:"Planilha; Tesouro Gerencial",atividades:[
-    {texto:"Preenchimento de planilha de controle TED/Emenda",padrao:true}
-  ]},
+    {texto:"Preenchimento de planilha de controle TED/Emenda",padrao:true}]},
   {tipo:"Participacao em atividades",sistemas:"Teams; Presencial",atividades:[
-    {texto:"Participacao em reuniao",padrao:false},
-    {texto:"Participacao em treinamento ou curso",padrao:false}
-  ]},
-  {tipo:"Ferias",sistemas:"-",atividades:[
-    {texto:"Ferias",padrao:true}
-  ]}
+    {texto:"Participacao em reuniao",padrao:false},{texto:"Participacao em treinamento ou curso",padrao:false}]},
+  {tipo:"Ferias",sistemas:"-",atividades:[{texto:"Ferias",padrao:true}]}
 ];
 
-var registros = JSON.parse(localStorage.getItem('cofin_reg') || '[]');
-var editIdx = -1;
+var config=JSON.parse(localStorage.getItem(CONFIG_KEY)||'null')||defaultConfig;
+var registros=JSON.parse(localStorage.getItem(REG_KEY)||'[]');
+var editIdx=-1, editAtvIdx={ci:-1,ai:-1}, editTipoIdx=-1;
 
-function today() {
-  var d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+function salvarConfig(){localStorage.setItem(CONFIG_KEY,JSON.stringify(config));}
+function salvarRegs(){localStorage.setItem(REG_KEY,JSON.stringify(registros));}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+function init(){
+  document.getElementById('data').value=today();
+  popularSelect();renderHistorico();renderConfig();
 }
 
-function init() {
-  document.getElementById('data').value = today();
-  var sel = document.getElementById('tipo');
-  config.forEach(function(c) {
-    var o = document.createElement('option');
-    o.value = c.tipo; o.textContent = c.tipo;
-    sel.appendChild(o);
-  });
-  renderHistorico();
-  renderConfig();
+function popularSelect(){
+  var s=document.getElementById('tipo');
+  s.innerHTML='<option value="">— Selecione o tipo —</option>';
+  config.forEach(function(c){var o=document.createElement('option');o.value=c.tipo;o.textContent=c.tipo;s.appendChild(o);});
 }
 
-function showTab(t, btn) {
+function showTab(t,btn){
   document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active')});
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
-  document.getElementById(t).classList.add('active');
-  btn.classList.add('active');
-  if (t === 'historico') renderHistorico();
+  document.getElementById(t).classList.add('active');btn.classList.add('active');
+  if(t==='historico')renderHistorico();
+  if(t==='config')renderConfig();
 }
 
-function onTipoChange() {
-  var v = document.getElementById('tipo').value;
-  var cf = config.find(function(c){return c.tipo === v});
-  if (!cf) {
-    document.getElementById('ativs-field').style.display = 'none';
-    document.getElementById('comp-field').style.display = 'none';
-    return;
-  }
-  document.getElementById('ativs-field').style.display = 'block';
-  document.getElementById('comp-field').style.display = 'block';
-  var list = document.getElementById('ativs-list');
-  list.innerHTML = '';
-  cf.atividades.forEach(function(a, i) {
-    var div = document.createElement('div');
-    div.className = 'atv-item' + (a.padrao ? ' padrao' : '');
-    var id = 'atv' + i;
-    div.innerHTML = '<input type="checkbox" id="' + id + '" ' + (a.padrao ? 'checked' : '') + ' onchange="atualizarSistemas()">'
-      + '<label for="' + id + '" class="atv-label">' + a.texto + (a.padrao ? '<span class="badge-padrao">padrao</span>' : '') + '</label>';
+function onTipoChange(){
+  var v=document.getElementById('tipo').value;
+  var cf=config.find(function(c){return c.tipo===v});
+  if(!cf){document.getElementById('ativs-field').style.display='none';document.getElementById('comp-field').style.display='none';return;}
+  document.getElementById('ativs-field').style.display='block';
+  document.getElementById('comp-field').style.display='block';
+  var list=document.getElementById('ativs-list');list.innerHTML='';
+  cf.atividades.forEach(function(a,i){
+    var div=document.createElement('div');div.className='atv-item'+(a.padrao?' padrao':'');
+    var id='atv'+i;
+    div.innerHTML='<input type="checkbox" id="'+id+'" '+(a.padrao?'checked':'')+' onchange="atualizarSistemas()">'
+      +'<label for="'+id+'" class="atv-label">'+a.texto+(a.padrao?'<span class="badge-padrao">padrao</span>':'')+'</label>';
     list.appendChild(div);
   });
   atualizarSistemas();
 }
 
-function atualizarSistemas() {
-  var v = document.getElementById('tipo').value;
-  var cf = config.find(function(c){return c.tipo === v});
-  if (!cf) return;
-  var algum = cf.atividades.some(function(a, i) {
-    var cb = document.getElementById('atv' + i);
-    return cb && cb.checked;
-  });
-  var box = document.getElementById('sistemas-box');
-  if (algum) { box.style.display = 'block'; box.textContent = 'Sistemas utilizados: ' + cf.sistemas; }
-  else { box.style.display = 'none'; }
+function atualizarSistemas(){
+  var v=document.getElementById('tipo').value;
+  var cf=config.find(function(c){return c.tipo===v});if(!cf)return;
+  var algum=cf.atividades.some(function(a,i){var cb=document.getElementById('atv'+i);return cb&&cb.checked;});
+  var box=document.getElementById('sistemas-box');
+  if(algum){box.style.display='block';box.textContent='Sistemas utilizados: '+cf.sistemas;}else{box.style.display='none';}
 }
 
-function getAtividadesSelecionadas() {
-  var v = document.getElementById('tipo').value;
-  var cf = config.find(function(c){return c.tipo === v});
-  if (!cf) return '';
-  var sels = [];
-  cf.atividades.forEach(function(a, i) {
-    var cb = document.getElementById('atv' + i);
-    if (cb && cb.checked) sels.push(a.texto);
-  });
-  var comp = document.getElementById('complemento').value.trim();
-  if (comp) sels.push(comp);
-  return sels.join('; ');
+function getAtividades(){
+  var v=document.getElementById('tipo').value;
+  var cf=config.find(function(c){return c.tipo===v});if(!cf)return'';
+  var s=[];
+  cf.atividades.forEach(function(a,i){var cb=document.getElementById('atv'+i);if(cb&&cb.checked)s.push(a.texto);});
+  var c=document.getElementById('complemento').value.trim();if(c)s.push(c);
+  return s.join('; ');
 }
 
-function salvarRegistro() {
-  var tipo = document.getElementById('tipo').value;
-  if (!tipo) { showToast('Selecione o tipo de demanda'); return; }
-  var ativs = getAtividadesSelecionadas();
-  if (!ativs) { showToast('Selecione ao menos uma atividade'); return; }
-  var cf = config.find(function(c){return c.tipo === tipo});
-  var reg = {
-    id: Date.now(),
-    sei: document.getElementById('sei').value.trim(),
-    data: document.getElementById('data').value,
-    tipo: tipo,
-    atividades: ativs,
-    sistemas: cf ? cf.sistemas : '',
-    detalhes: document.getElementById('detalhes').value.trim()
-  };
-  registros.unshift(reg);
-  salvarStorage();
-  limparForm();
-  showToast('Registro salvo com sucesso!');
+function salvarRegistro(){
+  var tipo=document.getElementById('tipo').value;
+  if(!tipo){showToast('Selecione o tipo de demanda');return;}
+  var ativs=getAtividades();if(!ativs){showToast('Selecione ao menos uma atividade');return;}
+  var cf=config.find(function(c){return c.tipo===tipo});
+  registros.unshift({id:Date.now(),sei:document.getElementById('sei').value.trim(),data:document.getElementById('data').value,tipo:tipo,atividades:ativs,sistemas:cf?cf.sistemas:'',detalhes:document.getElementById('detalhes').value.trim()});
+  salvarRegs();limparForm();showToast('Registro salvo!');
 }
 
-function limparForm() {
-  document.getElementById('sei').value = '';
-  document.getElementById('data').value = today();
-  document.getElementById('tipo').value = '';
-  document.getElementById('complemento').value = '';
-  document.getElementById('detalhes').value = '';
-  document.getElementById('ativs-field').style.display = 'none';
-  document.getElementById('comp-field').style.display = 'none';
-  document.getElementById('ativs-list').innerHTML = '';
-  document.getElementById('sistemas-box').style.display = 'none';
+function limparForm(){
+  document.getElementById('sei').value='';document.getElementById('data').value=today();
+  document.getElementById('tipo').value='';document.getElementById('complemento').value='';document.getElementById('detalhes').value='';
+  document.getElementById('ativs-field').style.display='none';document.getElementById('comp-field').style.display='none';
+  document.getElementById('ativs-list').innerHTML='';document.getElementById('sistemas-box').style.display='none';
 }
 
-function renderHistorico() {
-  var total = registros.length;
-  var liq = registros.filter(function(r){return r.tipo.toLowerCase().indexOf('liquidac') > -1}).length;
-  var pag = registros.filter(function(r){return r.tipo.toLowerCase().indexOf('pagament') > -1}).length;
-  document.getElementById('stats').innerHTML =
-    '<div class="stat"><div class="n">' + total + '</div><div class="l">Total</div></div>' +
-    '<div class="stat"><div class="n">' + liq + '</div><div class="l">Liquidacoes</div></div>' +
-    '<div class="stat"><div class="n">' + pag + '</div><div class="l">Pagamentos</div></div>';
-  var lista = document.getElementById('lista-registros');
-  if (!registros.length) {
-    lista.innerHTML = '<div class="empty"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg><br>Nenhum registro ainda.<br>Use a aba "Novo registro" para comecar.</div>';
-    return;
-  }
-  lista.innerHTML = registros.map(function(r, i) {
-    var df = r.data ? r.data.split('-').reverse().join('/') : '';
-    return '<div class="reg-card">'
-      + '<div class="tipo">' + r.tipo + '</div>'
-      + '<div class="proc">' + (r.sei || '<span style="color:#aaa;font-weight:400">Sem processo SEI</span>') + '</div>'
-      + '<div class="ativs">' + (r.atividades || '') + '</div>'
-      + '<div class="meta">'
-      + (df ? '<span>📅 ' + df + '</span>' : '')
-      + (r.sistemas ? '<span>💻 ' + r.sistemas + '</span>' : '')
-      + (r.detalhes ? '<span>📄 ' + r.detalhes + '</span>' : '')
-      + '</div>'
-      + '<div class="acoes">'
-      + '<button class="btn-secondary" onclick="abrirEdicao(' + i + ')">Editar</button>'
-      + '<button class="btn-danger" onclick="excluir(' + i + ')">Excluir</button>'
-      + '</div></div>';
+function renderHistorico(){
+  var t=registros.length,liq=0,pag=0;
+  registros.forEach(function(r){if(r.tipo.toLowerCase().indexOf('liquidac')>-1)liq++;if(r.tipo.toLowerCase().indexOf('pagament')>-1)pag++;});
+  document.getElementById('stats').innerHTML='<div class="stat"><div class="n">'+t+'</div><div class="l">Total</div></div><div class="stat"><div class="n">'+liq+'</div><div class="l">Liquidacoes</div></div><div class="stat"><div class="n">'+pag+'</div><div class="l">Pagamentos</div></div>';
+  var el=document.getElementById('lista-registros');
+  if(!registros.length){el.innerHTML='<div class="empty">Nenhum registro ainda.<br>Use a aba "Novo registro" para comecar.</div>';return;}
+  el.innerHTML=registros.map(function(r,i){
+    var df=r.data?r.data.split('-').reverse().join('/'):'';
+    return '<div class="reg-card"><div class="tipo">'+r.tipo+'</div><div class="proc">'+(r.sei||'<span style="color:#aaa;font-weight:400">Sem processo SEI</span>')+'</div><div class="ativs">'+(r.atividades||'')+'</div><div class="meta">'+(df?'<span>📅 '+df+'</span>':'')+(r.sistemas?'<span>💻 '+r.sistemas+'</span>':'')+(r.detalhes?'<span>📄 '+r.detalhes+'</span>':'')+'</div><div class="acoes"><button class="btn-sm" onclick="abrirEdicaoReg('+i+')">Editar</button><button class="btn-sm danger" onclick="excluirReg('+i+')">Excluir</button></div></div>';
   }).join('');
 }
 
-function abrirEdicao(i) {
-  editIdx = i;
-  var r = registros[i];
-  document.getElementById('e-sei').value = r.sei || '';
-  document.getElementById('e-data').value = r.data || '';
-  document.getElementById('e-tipo').value = r.tipo || '';
-  document.getElementById('e-ativs').value = r.atividades || '';
-  document.getElementById('e-sistemas').value = r.sistemas || '';
-  document.getElementById('e-detalhes').value = r.detalhes || '';
+function abrirEdicaoReg(i){
+  editIdx=i;var r=registros[i];
+  document.getElementById('e-sei').value=r.sei||'';document.getElementById('e-data').value=r.data||'';
+  document.getElementById('e-tipo').value=r.tipo||'';document.getElementById('e-ativs').value=r.atividades||'';
+  document.getElementById('e-sistemas').value=r.sistemas||'';document.getElementById('e-detalhes').value=r.detalhes||'';
   document.getElementById('edit-modal').classList.add('open');
 }
 
-function salvarEdicao() {
-  if (editIdx < 0) return;
-  registros[editIdx] = {
-    id: registros[editIdx].id,
-    sei: document.getElementById('e-sei').value,
-    data: document.getElementById('e-data').value,
-    tipo: document.getElementById('e-tipo').value,
-    atividades: document.getElementById('e-ativs').value,
-    sistemas: document.getElementById('e-sistemas').value,
-    detalhes: document.getElementById('e-detalhes').value
-  };
-  salvarStorage();
-  fecharModal();
-  renderHistorico();
-  showToast('Registro atualizado!');
+function salvarEdicao(){
+  if(editIdx<0)return;
+  registros[editIdx]={id:registros[editIdx].id,sei:document.getElementById('e-sei').value,data:document.getElementById('e-data').value,tipo:document.getElementById('e-tipo').value,atividades:document.getElementById('e-ativs').value,sistemas:document.getElementById('e-sistemas').value,detalhes:document.getElementById('e-detalhes').value};
+  salvarRegs();fecharModal('edit-modal');renderHistorico();showToast('Registro atualizado!');
 }
 
-function fecharModal() {
-  document.getElementById('edit-modal').classList.remove('open');
-  editIdx = -1;
+function excluirReg(i){if(!confirm('Excluir este registro?'))return;registros.splice(i,1);salvarRegs();renderHistorico();showToast('Excluido.');}
+
+function fecharModal(id){document.getElementById(id).classList.remove('open');editIdx=-1;editAtvIdx={ci:-1,ai:-1};editTipoIdx=-1;}
+
+function exportarCSV(){
+  if(!registros.length){showToast('Nenhum registro');return;}
+  var l=[['Data','Processo SEI','Tipo de Demanda','Atividades Realizadas','Sistemas Utilizados','Detalhes']];
+  registros.forEach(function(r){l.push([r.data?r.data.split('-').reverse().join('/'):'',r.sei||'',r.tipo||'',r.atividades||'',r.sistemas||'',r.detalhes||'']);});
+  var csv=l.map(function(r){return r.map(function(c){return'"'+(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download='COFIN_'+today()+'.csv';a.click();showToast('Exportado!');
 }
 
-function excluir(i) {
-  if (!confirm('Deseja excluir este registro?')) return;
-  registros.splice(i, 1);
-  salvarStorage();
-  renderHistorico();
-  showToast('Registro excluido.');
-}
-
-function salvarStorage() {
-  try { localStorage.setItem('cofin_reg', JSON.stringify(registros)); } catch(e) {}
-}
-
-function exportarCSV() {
-  if (!registros.length) { showToast('Nenhum registro para exportar'); return; }
-  var linhas = [['Data','Processo SEI','Tipo de Demanda','Atividades Realizadas','Sistemas Utilizados','Detalhes']];
-  registros.forEach(function(r) {
-    linhas.push([
-      r.data ? r.data.split('-').reverse().join('/') : '',
-      r.sei || '', r.tipo || '', r.atividades || '', r.sistemas || '', r.detalhes || ''
-    ]);
-  });
-  var csv = linhas.map(function(l) {
-    return l.map(function(c) { return '"' + (c || '').replace(/"/g, '""') + '"'; }).join(',');
-  }).join('\n');
-  var blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a'); a.href = url;
-  a.download = 'COFIN_Atividades_' + today() + '.csv';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('Arquivo exportado!');
-}
-
-function renderConfig() {
-  var div = document.getElementById('config-lista');
-  div.innerHTML = config.map(function(c, ci) {
+function renderConfig(){
+  document.getElementById('config-lista').innerHTML=config.map(function(c,ci){
+    var np=c.atividades.filter(function(a){return a.padrao;}).length;
     return '<div class="config-tipo">'
-      + '<h3>' + c.tipo + '</h3>'
-      + '<div class="sis">Sistemas: ' + c.sistemas + '</div>'
-      + c.atividades.map(function(a, ai) {
-          return '<div class="config-atv">'
-            + '<input type="checkbox" ' + (a.padrao ? 'checked' : '') + ' onchange="togglePadrao(' + ci + ',' + ai + ',this.checked)">'
-            + '<span>' + a.texto + '</span>'
-            + '<em>' + (a.padrao ? 'padrao' : 'opcional') + '</em>'
-            + '</div>';
-        }).join('')
-      + '</div>';
+      +'<div class="config-tipo-header" onclick="toggleBody('+ci+')">'
+      +'<div><div class="config-tipo-title">'+c.tipo+'</div><div class="config-tipo-meta">'+c.atividades.length+' atividades &bull; '+np+' padrao &bull; '+c.sistemas+'</div></div>'
+      +'<div style="display:flex;gap:6px;flex-shrink:0">'
+      +'<button class="btn-sm" onclick="event.stopPropagation();editarTipo('+ci+')">Editar</button>'
+      +'<button class="btn-sm danger" onclick="event.stopPropagation();excluirTipo('+ci+')">Excluir</button>'
+      +'</div></div>'
+      +'<div class="config-tipo-body" id="body-'+ci+'">'
+      +c.atividades.map(function(a,ai){
+        return '<div class="config-atv-row">'
+          +'<input type="checkbox" '+(a.padrao?'checked':'')+' title="Marcar como padrao" onchange="setPadrao('+ci+','+ai+',this.checked)">'
+          +'<span class="config-atv-texto">'+a.texto+'</span>'
+          +'<span class="config-atv-tipo">'+(a.padrao?'padrao':'opcional')+'</span>'
+          +'<button class="btn-sm" onclick="editarAtv('+ci+','+ai+')">Editar</button>'
+          +'<button class="btn-sm danger" onclick="removerAtv('+ci+','+ai+')">Remover</button>'
+          +'</div>';
+      }).join('')
+      +'<div class="add-atv-row">'
+      +'<input type="text" id="ni-'+ci+'" placeholder="Nome da nova atividade...">'
+      +'<button class="toggle-padrao" id="nt-'+ci+'" data-v="false" onclick="flipNovaTipo('+ci+')">opcional</button>'
+      +'<button class="btn-sm success" onclick="addAtv('+ci+')">Adicionar</button>'
+      +'</div>'
+      +'</div></div>';
   }).join('');
 }
 
-function togglePadrao(ci, ai, val) {
-  config[ci].atividades[ai].padrao = val;
-  showToast('Configuracao salva!');
+function toggleBody(ci){var b=document.getElementById('body-'+ci);b.classList.toggle('open');}
+function keepOpen(ci){setTimeout(function(){var b=document.getElementById('body-'+ci);if(b)b.classList.add('open');},20);}
+
+function setPadrao(ci,ai,v){config[ci].atividades[ai].padrao=v;salvarConfig();renderConfig();keepOpen(ci);showToast('Salvo!');}
+
+function flipNovaTipo(ci){
+  var b=document.getElementById('nt-'+ci);var v=b.getAttribute('data-v')==='true';
+  b.setAttribute('data-v',!v);b.textContent=!v?'padrao':'opcional';b.className='toggle-padrao'+(!v?' on':'');
 }
 
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+function addAtv(ci){
+  var inp=document.getElementById('ni-'+ci);var t=inp.value.trim();
+  if(!t){showToast('Digite o nome da atividade');return;}
+  var padrao=document.getElementById('nt-'+ci).getAttribute('data-v')==='true';
+  config[ci].atividades.push({texto:t,padrao:padrao});
+  salvarConfig();popularSelect();renderConfig();keepOpen(ci);showToast('Atividade adicionada!');
 }
+
+function editarAtv(ci,ai){
+  editAtvIdx={ci:ci,ai:ai};var a=config[ci].atividades[ai];
+  document.getElementById('atv-texto').value=a.texto;
+  document.getElementById(a.padrao?'atv-r-padrao':'atv-r-opcional').checked=true;
+  document.getElementById('atv-modal').classList.add('open');
+}
+
+function salvarAtvEdicao(){
+  var ci=editAtvIdx.ci,ai=editAtvIdx.ai;if(ci<0)return;
+  var t=document.getElementById('atv-texto').value.trim();if(!t){showToast('Digite o texto');return;}
+  config[ci].atividades[ai]={texto:t,padrao:document.getElementById('atv-r-padrao').checked};
+  salvarConfig();popularSelect();fecharModal('atv-modal');renderConfig();keepOpen(ci);showToast('Atualizado!');
+}
+
+function removerAtv(ci,ai){
+  if(!confirm('Remover esta atividade?'))return;
+  config[ci].atividades.splice(ai,1);salvarConfig();popularSelect();renderConfig();keepOpen(ci);showToast('Removida.');
+}
+
+function editarTipo(ci){
+  editTipoIdx=ci;
+  document.getElementById('tipo-modal-title').textContent='Editar tipo de demanda';
+  document.getElementById('nt-nome').value=config[ci].tipo;
+  document.getElementById('nt-sistemas').value=config[ci].sistemas;
+  document.getElementById('tipo-modal').classList.add('open');
+}
+
+function abrirModalNovoTipo(){
+  editTipoIdx=-1;
+  document.getElementById('tipo-modal-title').textContent='Novo tipo de demanda';
+  document.getElementById('nt-nome').value='';document.getElementById('nt-sistemas').value='';
+  document.getElementById('tipo-modal').classList.add('open');
+}
+
+function salvarTipo(){
+  var nome=document.getElementById('nt-nome').value.trim();
+  if(!nome){showToast('Digite o nome');return;}
+  var sis=document.getElementById('nt-sistemas').value.trim()||'-';
+  if(editTipoIdx>=0){config[editTipoIdx].tipo=nome;config[editTipoIdx].sistemas=sis;showToast('Tipo atualizado!');}
+  else{config.push({tipo:nome,sistemas:sis,atividades:[]});showToast('Tipo criado!');}
+  salvarConfig();popularSelect();fecharModal('tipo-modal');renderConfig();
+}
+
+function excluirTipo(ci){
+  if(!confirm('Excluir o tipo "'+config[ci].tipo+'" e todas as suas atividades?'))return;
+  config.splice(ci,1);salvarConfig();popularSelect();renderConfig();showToast('Tipo excluido.');
+}
+
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
 
 init();
 </script>
