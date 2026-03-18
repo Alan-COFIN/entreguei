@@ -153,6 +153,21 @@ textarea{resize:vertical;min-height:64px}
 .autocomplete-item:hover{background:#f8f9ff}
 .autocomplete-item em{font-style:normal;font-weight:700;color:#2E75B6}
 
+
+.sei-historico{background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-top:8px;display:none}
+.sei-historico.show{display:block}
+.sei-hist-title{font-size:11px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.sei-hist-item{font-size:12px;padding:5px 0;border-bottom:1px solid #f5f5f5;color:#555;line-height:1.4}
+.sei-hist-item:last-child{border-bottom:none}
+.sei-hist-tipo{font-weight:600;color:#1a1a1a;font-size:12px}
+.sei-hist-ativs{color:#666;font-size:11px;margin-top:2px}
+.sei-hist-btn{font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1.5px solid #c5cae9;background:#f8f9ff;color:#3949ab;font-weight:500;white-space:nowrap}
+.sei-hist-btn:hover{background:#e8eaf6}
+.atv-sistemas{font-size:10px;color:#888;margin-left:6px}
+.sistemas-tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:#e8f0fe;color:#1a5296;margin:1px;font-weight:500;cursor:pointer}
+.sistemas-tag:hover{background:#c5cae9}
+.sistemas-tag.sel{background:#1F3864;color:#fff}
+
 @media(max-width:520px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.cfg-hdr{flex-direction:column;align-items:flex-start;gap:8px}.pit-bar{display:none}}
 </style>
 </head>
@@ -188,7 +203,11 @@ textarea{resize:vertical;min-height:64px}
   <div id="registro" class="section active">
     <div class="card">
       <div class="row">
-        <div class="field"><label>Processo SEI</label><input type="text" id="sei" placeholder="Ex: 23244.004463/2024-69"></div>
+        <div class="field">
+          <label>Processo SEI</label>
+          <input type="text" id="sei" placeholder="Ex: 23244.004463/2024-69" oninput="onSeiInput()">
+          <div class="sei-historico" id="sei-historico"></div>
+        </div>
         <div class="field"><label>Data</label><input type="date" id="data"></div>
       </div>
       <div class="field">
@@ -401,7 +420,7 @@ textarea{resize:vertical;min-height:64px}
 <div class="toast" id="toast"></div>
 
 <script>
-var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxwweMbF5eErgErqcbTZY39xT4RRsMlQ5o2HNeLz5vt_FkBV-zfssi-dNU_W-f_tpAq/exec';
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbycW1441DansTe1a-S_nRGHuwYhVDcKh-C8mxMWRoV80SFeLsy1jvF052XuTrJjq0VL/exec';
 var CONFIG_KEY = 'cofin_config';
 var REG_KEY = 'cofin_reg';
 var PIT_KEY = 'cofin_pit';
@@ -409,129 +428,7 @@ var editIdx = -1;
 var editAtvIdx = {ci:-1,ai:-1};
 var editTipoIdx = -1;
 
-var defaultConfig = [
-  {tipo:"Atendimento aos campi e setores quanto a orientacoes tecnicas",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
-    {texto:"Orientacao tecnica por e-mail",padrao:true},
-    {texto:"Orientacao tecnica por WhatsApp",padrao:true},
-    {texto:"Solicitacao de correcao de NP/RP ao campus",padrao:false},
-    {texto:"Solicitacao de alteracao ou inclusao de deducao federal/INSS",padrao:false},
-    {texto:"Atendimento presencial ou por videoconferencia",padrao:false},
-    {texto:"Registro de atendimento em planilha de controle",padrao:false}]},
-  {tipo:"Atendimento aos fornecedores quanto aos pagamentos",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
-    {texto:"Atendimento sobre pagamento pendente",padrao:true},
-    {texto:"Esclarecimento sobre retencoes tributarias",padrao:true},
-    {texto:"Informe de previsao de pagamento",padrao:false},
-    {texto:"Solicitacao de nota fiscal ou documentacao faltante",padrao:false},
-    {texto:"Verificacao de dados bancarios do fornecedor",padrao:false}]},
-  {tipo:"Atendimento as determinacoes e demandas de orgaos externos",sistemas:"SEI; E-mail; SIAFI",atividades:[
-    {texto:"Elaboracao de oficio ou despacho de resposta",padrao:true},
-    {texto:"Levantamento de informacoes solicitadas",padrao:true},
-    {texto:"Envio de documentacao ao orgao externo",padrao:false},
-    {texto:"Registro e acompanhamento no SEI",padrao:false},
-    {texto:"Consulta ao setor juridico ou superior",padrao:false}]},
-  {tipo:"Atividades referentes a Liquidacao de Despesas",sistemas:"SIAFI; SEI; SICAF; Contratos; Planilha REINF",atividades:[
-    {texto:"Consulta do SICAF",padrao:true},
-    {texto:"Consulta do Simples Nacional",padrao:true},
-    {texto:"Aprovacao da NF no Contratos",padrao:true},
-    {texto:"Conferencia do despacho para liquidacao",padrao:true},
-    {texto:"Despacho da Nota de Sistema (NS) para COERG",padrao:true},
-    {texto:"Lancamento de encargo no drive REINF",padrao:true},
-    {texto:"Verificacao dos beneficiarios e lista de credores",padrao:false},
-    {texto:"Geracao de Lista de Fatura",padrao:false},
-    {texto:"Liquidacao no SIAFI",padrao:false},
-    {texto:"Consulta de IRRF incidente",padrao:false},
-    {texto:"Conferencia da descricao do despacho e links",padrao:false},
-    {texto:"Encaminhamento para COERG",padrao:false}]},
-  {tipo:"Atividades referentes a liquidacao e pagamento da folha de pessoal",sistemas:"SIAFI; SEI; Planilha; Serpro",atividades:[
-    {texto:"Preenchimento da planilha pre-lancamento SIAFI",padrao:true},
-    {texto:"Solicitacao de recurso financeiro da folha no SIAFI",padrao:true},
-    {texto:"Consulta da liberacao do recurso financeiro",padrao:true},
-    {texto:"Anexo dos comprovantes de pagamento da folha",padrao:true},
-    {texto:"Despacho das OBs para COERG",padrao:true},
-    {texto:"Consulta no Serpro",padrao:false},
-    {texto:"Conferencia da programacao financeira",padrao:false},
-    {texto:"Liquidacao e pagamento do PASEP",padrao:false}]},
-  {tipo:"Atividades referentes ao Pagamento de Despesas",sistemas:"SIAFI; SEI; SICAF; Planilha REINF",atividades:[
-    {texto:"Conferencia do despacho decisorio",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Pagamento da liquidacao no SIAFI",padrao:true},
-    {texto:"Lancamento no drive REINF apos pagamento",padrao:true},
-    {texto:"Despacho da OB para COERG",padrao:true},
-    {texto:"Consulta de recurso TED/Emenda antes do pagamento",padrao:true},
-    {texto:"Geracao da Guia do ISS",padrao:false},
-    {texto:"Criacao da Lista de Fatura do ISS",padrao:false},
-    {texto:"Lançamento da deducao federal no drive REINF",padrao:false},
-    {texto:"Confirmacao da lista de beneficiarios e LCs",padrao:false},
-    {texto:"Fechamento das LCs",padrao:false},
-    {texto:"Informe por e-mail ao demandante",padrao:false},
-    {texto:"Conferencia e pagamento das PCDPs no SIAFI",padrao:false}]},
-  {tipo:"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao",sistemas:"SEI; Tesouro Gerencial; Trello; Planilha",atividades:[
-    {texto:"Elaboracao de despacho",padrao:true},
-    {texto:"Envio de e-mail institucional",padrao:true},
-    {texto:"Emissao de relatorio gerencial",padrao:false},
-    {texto:"Preenchimento de planilha de controle",padrao:false},
-    {texto:"Tela de consulta no SIAFI ou Tesouro Gerencial",padrao:false},
-    {texto:"Registro no Trello",padrao:false},
-    {texto:"Participacao em alinhamento com a diretoria",padrao:false}]},
-  {tipo:"Controle e acompanhamento recursos especificos (TED/Emenda)",sistemas:"Planilha; Tesouro Gerencial; SIAFI; SIMEC; FNDE",atividades:[
-    {texto:"Preenchimento de planilha de controle TED/Emenda",padrao:true},
-    {texto:"Consulta de saldo disponivel no Tesouro Gerencial",padrao:true},
-    {texto:"Verificacao de liberacao de recurso no SIAFI",padrao:false},
-    {texto:"Preenchimento do sistema SIMEC",padrao:false},
-    {texto:"Preenchimento do sistema FNDE",padrao:false},
-    {texto:"Elaboracao de despacho de acompanhamento",padrao:false},
-    {texto:"E-mail de consulta ou informe sobre TED/Emenda",padrao:false}]},
-  {tipo:"Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)",sistemas:"SIAFI; SEFIP; DCTFWeb; eSocial; Portal RFB; Portal ISS",atividades:[
-    {texto:"Emissao de DARF",padrao:false},
-    {texto:"Lancamento no SEFIP/GFIP",padrao:false},
-    {texto:"Preenchimento e fechamento do EFD-Reinf",padrao:false},
-    {texto:"Transmissao da DCTFWeb",padrao:false},
-    {texto:"Recolhimento de GPS",padrao:false},
-    {texto:"Envio de IRRF ao fornecedor ou colaborador externo",padrao:false},
-    {texto:"Geracao e pagamento de guia de ISS",padrao:false},
-    {texto:"Conciliacao de obrigacoes tributarias",padrao:false},
-    {texto:"Elaboracao de despacho ou oficio tributario",padrao:false}]},
-  {tipo:"Elaboracao e revisao de fluxos de processos e manuais",sistemas:"SEI; Word; Drive",atividades:[
-    {texto:"Elaboracao de novo fluxo de processo",padrao:false},
-    {texto:"Revisao de manual ou procedimento existente",padrao:false},
-    {texto:"Participacao em reuniao de alinhamento para padronizacao",padrao:false},
-    {texto:"Elaboracao de despacho com solicitacao de aprovacao",padrao:false},
-    {texto:"Publicacao ou divulgacao do documento elaborado",padrao:false}]},
-  {tipo:"Envio de demandas (liquidacao e pagamento) para os campi",sistemas:"SEI; Planilha",atividades:[
-    {texto:"Conferencia do despacho decisorio",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Preenchimento da planilha de acompanhamento",padrao:true},
-    {texto:"Despacho autorizando pagamento para o campus",padrao:true},
-    {texto:"Envio de e-mail de comunicacao ao campus",padrao:false},
-    {texto:"Acompanhamento do retorno do campus",padrao:false}]},
-  {tipo:"Envio de IRRF aos fornecedores e colaboradores externos",sistemas:"E-mail; Planilha; SEI",atividades:[
-    {texto:"Emissao do comprovante de IRRF",padrao:true},
-    {texto:"Envio por e-mail ao fornecedor ou colaborador",padrao:true},
-    {texto:"Elaboracao de declaracao de rendimentos",padrao:false},
-    {texto:"Emissao de relatorio de retencoes",padrao:false},
-    {texto:"Registro no controle interno de IRRF enviados",padrao:false}]},
-  {tipo:"Gestao de Recursos Financeiros",sistemas:"SIAFI; Tesouro Gerencial; SEI",atividades:[
-    {texto:"Emissao de nota de lancamento (NL) no SIAFI",padrao:false},
-    {texto:"Emissao de programacao financeira (PF)",padrao:false},
-    {texto:"Emissao de nota de sistema (NS)",padrao:false},
-    {texto:"Consulta e acompanhamento de saldo financeiro",padrao:false},
-    {texto:"Envio de Comunica no SIAFI",padrao:false},
-    {texto:"Emissao de relatorio gerencial no Tesouro Gerencial",padrao:false},
-    {texto:"Elaboracao de despacho de gestao financeira",padrao:false}]},
-  {tipo:"Participacao em atividades",sistemas:"Teams; Presencial; Plataforma EAD",atividades:[
-    {texto:"Participacao em reuniao",padrao:false},
-    {texto:"Participacao em treinamento ou curso",padrao:false},
-    {texto:"Participacao em comissao ou grupo de trabalho",padrao:false},
-    {texto:"Elaboracao de ata ou lista de presenca",padrao:false},
-    {texto:"Registro de certificado ou declaracao",padrao:false}]},
-  {tipo:"Regularizacao de pagamento (OBs canceladas)",sistemas:"SIAFI; E-mail; Planilha",atividades:[
-    {texto:"Consulta das OBs canceladas no SIAFI",padrao:true},
-    {texto:"Preenchimento de planilha de controle das OBs",padrao:true},
-    {texto:"Emissao de lista de credores",padrao:true},
-    {texto:"E-mail de consulta ao campus ou fornecedor",padrao:false},
-    {texto:"Regularizacao da OB no SIAFI",padrao:false},
-    {texto:"Despacho de regularizacao no SEI",padrao:false}]}
-];
+var defaultConfig = [{"tipo":"Atendimento aos campi e setores quanto a orientacoes tecnicas","sistemas":"E-mail; WhatsApp; SEI","atividades":[{"texto":"Orientacao tecnica por e-mail","padrao":true},{"texto":"Orientacao tecnica por WhatsApp","padrao":true},{"texto":"Solicitacao de correcao de NP/RP ao campus","padrao":true},{"texto":"Solicitacao de alteracao ou inclusao de deducao federal/INSS","padrao":false},{"texto":"Atendimento presencial ou por videoconferencia","padrao":false},{"texto":"Registro de atendimento em planilha de controle","padrao":false}]},{"tipo":"Atendimento aos fornecedores quanto aos pagamentos","sistemas":"E-mail; WhatsApp Institucional; SEI","atividades":[{"texto":"Atendimento sobre pagamento pendente","padrao":true},{"texto":"Esclarecimento sobre retencoes tributarias","padrao":true},{"texto":"Informe de previsao de pagamento","padrao":false},{"texto":"Solicitacao de nota fiscal ou documentacao faltante","padrao":false},{"texto":"Verificacao de dados bancarios do fornecedor","padrao":false}]},{"tipo":"Atendimento as determinacoes e demandas de orgaos externos","sistemas":"SEI; E-mail; SIAFI","atividades":[{"texto":"Elaboracao de oficio ou despacho de resposta","padrao":true},{"texto":"Levantamento de informacoes solicitadas","padrao":true},{"texto":"Envio de documentacao ao orgao externo","padrao":false},{"texto":"Registro e acompanhamento no SEI","padrao":false},{"texto":"Consulta ao setor juridico ou superior","padrao":false}]},{"tipo":"Atividades referentes a Liquidacao de Despesas","sistemas":"SIAFI; SEI; SICAF; Contratos; Planilha REINF","atividades":[{"texto":"Consulta do SICAF","padrao":true},{"texto":"Consulta do Simples Nacional","padrao":true},{"texto":"Conferência do Instrumento de Cobrança","padrao":true},{"texto":"Conferência de Despacho (Liquidação)","padrao":true},{"texto":"Apropriação da NF/FAT","padrao":true},{"texto":"Lancamento de encargo no drive REINF","padrao":true},{"texto":"Execução do DARF contábil INSS","padrao":false},{"texto":"Verificação Beneficiários / Lista de Credores","padrao":false},{"texto":"Geracao de Lista de Credores","padrao":false},{"texto":"Liquidacao SIAFI","padrao":false},{"texto":"Consulta de IRRF incidente","padrao":false},{"texto":"Encaminhamento para COERG","padrao":false}]},{"tipo":"Atividades referentes a liquidacao e pagamento da folha de pessoal","sistemas":"SIAFI; SEI; Planilha; Serpro","atividades":[{"texto":"Preenchimento da planilha pre-lancamento SIAFI","padrao":true},{"texto":"Solicitacao de recurso financeiro da folha no SIAFI","padrao":true},{"texto":"Consulta da liberacao do recurso financeiro","padrao":true},{"texto":"Anexo dos comprovantes de pagamento da folha","padrao":true},{"texto":"Despacho das OBs para COERG","padrao":true},{"texto":"Consulta no Serpro","padrao":false},{"texto":"Conferencia da programacao financeira","padrao":false},{"texto":"Liquidacao e pagamento do PASEP","padrao":false}]},{"tipo":"Atividades referentes ao Pagamento de Despesas","sistemas":"SIAFI; SEI; SICAF; Planilha REINF","atividades":[{"texto":"Conferência Despacho Decisório","padrao":true},{"texto":"Conferencia da liquidacao","padrao":true},{"texto":"Consulta do SICAF","padrao":true},{"texto":"Consulta de recurso TED/Emenda antes do pagamento","padrao":true},{"texto":"Geracao Guia do ISS","padrao":false},{"texto":"Criacao da Lista de Fatura do ISS","padrao":false},{"texto":"Pagamento da liquidacao no SIAFI","padrao":true},{"texto":"Lançamento REINF (Pós-Pagamento)","padrao":true},{"texto":"Fechamento LCs","padrao":false},{"texto":"Despacho OB p/ COERG","padrao":true},{"texto":"Lançamento Dedução Federal REINF","padrao":false},{"texto":"Confirmação Beneficiários / LCs","padrao":false},{"texto":"Informe do PG ao demandante (e-mail)","padrao":false},{"texto":"Conferência e Pagamento PCDPs (SIAFI)","padrao":false}]},{"tipo":"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao","sistemas":"SEI; Tesouro Gerencial; Trello; Planilha","atividades":[{"texto":"Elaboracao de despacho","padrao":true},{"texto":"Envio de e-mail institucional","padrao":true},{"texto":"Emissao de relatorio gerencial","padrao":false},{"texto":"Preenchimento de planilha de controle","padrao":false},{"texto":"Tela de consulta no SIAFI ou Tesouro Gerencial","padrao":false},{"texto":"Registro no Trello","padrao":false},{"texto":"Participacao em alinhamento com a diretoria","padrao":false}]},{"tipo":"Controle e acompanhamento recursos especificos (TED/Emenda)","sistemas":"Planilha; Tesouro Gerencial; SIAFI; SIMEC; FNDE","atividades":[{"texto":"Preenchimento de planilha de controle TED/Emenda","padrao":true},{"texto":"Consulta de saldo disponivel no Tesouro Gerencial","padrao":true},{"texto":"Verificacao de liberacao de recurso no SIAFI","padrao":false},{"texto":"Preenchimento do sistema SIMEC","padrao":false},{"texto":"Preenchimento do sistema FNDE","padrao":false},{"texto":"Elaboracao de despacho de acompanhamento","padrao":false},{"texto":"E-mail de consulta ou informe sobre TED/Emenda","padrao":false}]},{"tipo":"Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)","sistemas":"SIAFI; SEFIP; DCTFWeb; eSocial; Portal RFB; Portal ISS","atividades":[{"texto":"Emissao de DARF","padrao":false},{"texto":"Lancamento no SEFIP/GFIP","padrao":false},{"texto":"Preenchimento e fechamento do EFD-Reinf","padrao":false},{"texto":"Transmissao da DCTFWeb","padrao":false},{"texto":"Recolhimento de GPS","padrao":false},{"texto":"Envio de IRRF ao fornecedor ou colaborador externo","padrao":false},{"texto":"Geracao e pagamento de guia de ISS","padrao":false},{"texto":"Conciliacao de obrigacoes tributarias","padrao":false},{"texto":"Elaboracao de despacho ou oficio tributario","padrao":false}]},{"tipo":"Elaboracao e revisao de fluxos de processos e manuais","sistemas":"SEI; Word; Drive","atividades":[{"texto":"Elaboracao de novo fluxo de processo","padrao":false},{"texto":"Revisao de manual ou procedimento existente","padrao":false},{"texto":"Participacao em reuniao de alinhamento para padronizacao","padrao":false},{"texto":"Elaboracao de despacho com solicitacao de aprovacao","padrao":false},{"texto":"Publicacao ou divulgacao do documento elaborado","padrao":false}]},{"tipo":"Envio de demandas (liquidacao e pagamento) para os campi","sistemas":"SEI; Planilha","atividades":[{"texto":"Conferencia do despacho decisorio","padrao":true},{"texto":"Conferencia da liquidacao","padrao":true},{"texto":"Preenchimento da planilha de acompanhamento","padrao":true},{"texto":"Despacho autorizando pagamento para o campus","padrao":true},{"texto":"Conferência dos comprovantes de pagamento recebidos do campus","padrao":false},{"texto":"Verificacao do SICAF valido","padrao":false},{"texto":"Conferencia dos comprovantes de liquido e retencoes","padrao":false},{"texto":"Encaminhamento para COERG apos conferencia","padrao":false},{"texto":"Envio de e-mail de comunicacao ao campus","padrao":false},{"texto":"Acompanhamento do retorno do campus","padrao":false}]},{"tipo":"Envio de IRRF aos fornecedores e colaboradores externos","sistemas":"E-mail; Planilha; SEI","atividades":[{"texto":"Emissao do comprovante de IRRF","padrao":true},{"texto":"Envio por e-mail ao fornecedor ou colaborador","padrao":true},{"texto":"Elaboracao de declaracao de rendimentos","padrao":false},{"texto":"Emissao de relatorio de retencoes","padrao":false},{"texto":"Registro no controle interno de IRRF enviados","padrao":false}]},{"tipo":"Gestao de Recursos Financeiros","sistemas":"SIAFI; Tesouro Gerencial; SEI","atividades":[{"texto":"Emissao de Nota de Lancamento (NL)","padrao":false},{"texto":"Emissao de Programacao Financeira (PF)","padrao":false},{"texto":"Emissao de Nota de Sistema (NS)","padrao":false},{"texto":"Consulta e acompanhamento de saldo financeiro","padrao":false},{"texto":"Envio de Comunica no SIAFI","padrao":false},{"texto":"Emissao de relatorio gerencial no Tesouro Gerencial","padrao":false},{"texto":"Elaboracao de despacho de gestao financeira","padrao":false}]},{"tipo":"Participacao em atividades","sistemas":"Teams; Presencial; Plataforma EAD","atividades":[{"texto":"Participacao em reuniao","padrao":false},{"texto":"Participacao em treinamento ou curso","padrao":false},{"texto":"Participacao em comissao ou grupo de trabalho","padrao":false},{"texto":"Elaboracao de ata ou lista de presenca","padrao":false},{"texto":"Registro de certificado ou declaracao","padrao":false}]},{"tipo":"Regularizacao de pagamento (OBs canceladas)","sistemas":"SIAFI; E-mail; Planilha","atividades":[{"texto":"Consulta das OBs canceladas no SIAFI","padrao":true},{"texto":"Preenchimento de planilha de controle das OBs","padrao":true},{"texto":"Emissao de lista de credores","padrao":true},{"texto":"E-mail de consulta ao campus ou fornecedor","padrao":false},{"texto":"Regularizacao da OB no SIAFI","padrao":false},{"texto":"Despacho de regularizacao no SEI","padrao":false}]}];
 
 var defaultPit = [
   {titulo:"Atendimento aos campi e setores quanto a orientacoes tecnicas",tipo:"variavel",horas:7,peso:2},
@@ -551,11 +448,29 @@ var defaultPit = [
   {titulo:"Regularizacao de pagamento (OBs canceladas)",tipo:"fixa",horas:2,peso:1}
 ];
 
-var config = JSON.parse(localStorage.getItem(CONFIG_KEY)||'null') || defaultConfig;
+var CONFIG_VERSION = '2026-03-18';
+var storedVersion = localStorage.getItem('cofin_config_version');
+var config = (storedVersion === CONFIG_VERSION)
+  ? (JSON.parse(localStorage.getItem(CONFIG_KEY)||'null') || defaultConfig)
+  : defaultConfig;
+if(storedVersion !== CONFIG_VERSION){
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(defaultConfig));
+  localStorage.setItem('cofin_config_version', CONFIG_VERSION);
+}
 var registros = JSON.parse(localStorage.getItem(REG_KEY)||'[]');
 var pitEntregas = JSON.parse(localStorage.getItem(PIT_KEY)||'null') || defaultPit;
 
-function saveConfig(){localStorage.setItem(CONFIG_KEY,JSON.stringify(config));}
+function saveConfig(){
+  localStorage.setItem(CONFIG_KEY,JSON.stringify(config));
+  localStorage.setItem('cofin_config_version',CONFIG_VERSION);
+  sincronizarConfig();
+}
+function sincronizarConfig(){
+  fetch(SHEETS_URL,{
+    method:'POST',
+    body:JSON.stringify({action:'save_config', config:JSON.stringify(config)})
+  }).catch(function(){});
+}
 function saveRegs(){localStorage.setItem(REG_KEY,JSON.stringify(registros));}
 function savePit(){localStorage.setItem(PIT_KEY,JSON.stringify(pitEntregas));}
 
@@ -605,22 +520,55 @@ function enviarSheets(reg){
   });
 }
 
+function carregarConfigSheets(){
+  setSyncStatus('ing','Carregando configuracoes...');
+  fetch(SHEETS_URL,{
+    method:'POST',
+    body:JSON.stringify({action:'load_config'})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.status==='ok' && d.config){
+      try{
+        var remoto = JSON.parse(d.config);
+        if(remoto && remoto.length){
+          config = remoto;
+          localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+          localStorage.setItem('cofin_config_version', CONFIG_VERSION);
+          popularSelect();
+          renderConfig();
+          setSyncStatus('ok','Config sincronizada');
+        }
+      }catch(e){
+        setSyncStatus('ok','Sheets conectado');
+      }
+    } else {
+      // No config on Sheets yet - save current to Sheets
+      sincronizarConfig();
+      setSyncStatus('ok','Sheets conectado');
+    }
+  })
+  .catch(function(){
+    setSyncStatus('err','Sem conexao');
+  });
+}
+
 function init(){
   acBuild();
   document.getElementById('data').value = today();
-  // set default rel-mes to current month
   var now=new Date();
   var relMes=document.getElementById('rel-mes');
   if(relMes) relMes.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   popularSelect();
   renderHistorico();
   renderConfig();
-  // check alerts
   setTimeout(function(){
     var alertas=verificarAlertas();
     var el=document.getElementById('alerta-pit');
     if(el) el.style.display=alertas.length?'inline-block':'none';
   },500);
+  // Load config from Sheets on startup
+  carregarConfigSheets();
 }
 
 function popularSelect(){
@@ -675,12 +623,36 @@ function atualizarSistemas(){
   var v=document.getElementById('tipo').value;
   var cf=config.find(function(c){return c.tipo===v;});
   if(!cf) return;
-  var algum=cf.atividades.some(function(a,i){
-    var cb=document.getElementById('atv'+i);return cb&&cb.checked;
+  var selecionadas=[];
+  cf.atividades.forEach(function(a,i){
+    var cb=document.getElementById('atv'+i);
+    if(cb&&cb.checked) selecionadas.push(a.texto);
   });
+  var comp=document.getElementById('complemento').value.trim();
+  if(comp) comp.split(';').forEach(function(c){var t=c.trim();if(t)selecionadas.push(t);});
   var box=document.getElementById('sistemas-box');
-  if(algum){box.style.display='block';box.textContent='Sistemas utilizados: '+cf.sistemas;}
-  else{box.style.display='none';}
+  if(!selecionadas.length){box.style.display='none';return;}
+  var sistemas=getSistemasParaAtividades(selecionadas);
+  if(!sistemas.length) sistemas=cf.sistemas.split(';').map(function(s){return s.trim();});
+  box.style.display='block';
+  var html='<div style="font-size:11px;font-weight:700;color:#2d6a4f;margin-bottom:6px">Sistemas utilizados — clique para selecionar:</div>';
+  html+='<div id="sistemas-tags">';
+  sistemas.forEach(function(s,i){
+    html+='<span class="sistemas-tag'+(i<3?' sel':'')+'" onclick="toggleSistemaTag(this)">'+s+'</span>';
+  });
+  html+='</div>';
+  box.innerHTML=html;
+}
+
+function toggleSistemaTag(el){
+  el.classList.toggle('sel');
+}
+
+function getSistemasSelected(){
+  var tags=document.querySelectorAll('.sistemas-tag.sel');
+  var sists=[];
+  tags.forEach(function(t){sists.push(t.textContent);});
+  return sists.join('; ');
 }
 
 function getAtividades(){
@@ -709,7 +681,7 @@ function salvarRegistro(){
     tipo:tipo,
     tiposSecundarios:getTiposSecundarios(),
     atividades:ativs,
-    sistemas:cf?cf.sistemas:'',
+    sistemas:getSistemasSelected()||'',
     campus:document.getElementById('campus').value.trim(),
     detalhes:document.getElementById('detalhes').value.trim(),
     synced:false
@@ -1506,6 +1478,192 @@ function verificarAlertas(){
     }
   });
   return alertas;
+}
+
+
+// ── Mapa de sistemas por atividade ───────────────────────────
+var sistemasAtividade = {
+  "Consulta do SICAF": ["SICAF"],
+  "Consulta do Simples Nacional": ["Portal Simples Nacional"],
+  "Conferência do Instrumento de Cobrança": ["Compranet; SEI"],
+  "Conferência de Despacho (Liquidação)": ["SEI"],
+  "Apropriação da NF/FAT": ["Compranet; SIAFI"],
+  "Lancamento de encargo no drive REINF": ["Planilha REINF; Drive"],
+  "Execução do DARF contábil INSS": ["SIAFI"],
+  "Verificação Beneficiários / Lista de Credores": ["SIAFI; Planilha"],
+  "Geracao de Lista de Credores": ["SIAFI"],
+  "Liquidacao SIAFI": ["SIAFI"],
+  "Consulta de IRRF incidente": ["SIAFI; Receita Federal"],
+  "Encaminhamento para COERG": ["SEI"],
+  "Conferência Despacho Decisório": ["SEI"],
+  "Conferencia da liquidacao": ["SIAFI"],
+  "Consulta do SICAF": ["SICAF"],
+  "Consulta de recurso TED/Emenda antes do pagamento": ["SIAFI; Tesouro Gerencial"],
+  "Geracao Guia do ISS": ["Portal ISS; SIAFI"],
+  "Criacao da Lista de Fatura do ISS": ["Planilha; SIAFI"],
+  "Pagamento da liquidacao no SIAFI": ["SIAFI"],
+  "Lançamento REINF (Pós-Pagamento)": ["Planilha REINF; Drive"],
+  "Fechamento LCs": ["SIAFI"],
+  "Despacho OB p/ COERG": ["SEI; SIAFI"],
+  "Lançamento Dedução Federal REINF": ["Planilha REINF"],
+  "Confirmação Beneficiários / LCs": ["SIAFI; Planilha"],
+  "Informe do PG ao demandante (e-mail)": ["E-mail"],
+  "Conferência e Pagamento PCDPs (SIAFI)": ["SIAFI"],
+  "Orientacao tecnica por e-mail": ["E-mail"],
+  "Orientacao tecnica por WhatsApp": ["WhatsApp"],
+  "Solicitacao de correcao de NP/RP ao campus": ["E-mail; WhatsApp; SEI"],
+  "Solicitacao de alteracao ou inclusao de deducao federal/INSS": ["E-mail; SEI"],
+  "Atendimento presencial ou por videoconferencia": ["Teams; Presencial"],
+  "Atendimento sobre pagamento pendente": ["E-mail; WhatsApp"],
+  "Esclarecimento sobre retencoes tributarias": ["E-mail; WhatsApp"],
+  "Informe de previsao de pagamento": ["E-mail"],
+  "Solicitacao de nota fiscal ou documentacao faltante": ["E-mail"],
+  "Verificacao de dados bancarios do fornecedor": ["E-mail; SIAFI"],
+  "Elaboracao de oficio ou despacho de resposta": ["SEI"],
+  "Levantamento de informacoes solicitadas": ["SIAFI; SEI; Tesouro Gerencial"],
+  "Envio de documentacao ao orgao externo": ["SEI; E-mail"],
+  "Preenchimento da planilha pre-lancamento SIAFI": ["SIAFI; Planilha"],
+  "Solicitacao de recurso financeiro da folha no SIAFI": ["SIAFI"],
+  "Consulta da liberacao do recurso financeiro": ["SIAFI"],
+  "Anexo dos comprovantes de pagamento da folha": ["SEI"],
+  "Despacho das OBs para COERG": ["SEI; SIAFI"],
+  "Consulta no Serpro": ["Serpro"],
+  "Liquidacao e pagamento do PASEP": ["SIAFI"],
+  "Elaboracao de despacho": ["SEI"],
+  "Envio de e-mail institucional": ["E-mail"],
+  "Emissao de relatorio gerencial": ["Tesouro Gerencial; SIAFI"],
+  "Preenchimento de planilha de controle": ["Planilha"],
+  "Registro no Trello": ["Trello"],
+  "Preenchimento de planilha de controle TED/Emenda": ["Planilha; SIAFI"],
+  "Consulta de saldo disponivel no Tesouro Gerencial": ["Tesouro Gerencial"],
+  "Verificacao de liberacao de recurso no SIAFI": ["SIAFI"],
+  "Preenchimento do sistema SIMEC": ["SIMEC"],
+  "Preenchimento do sistema FNDE": ["FNDE"],
+  "Emissao de DARF": ["SIAFI; Receita Federal"],
+  "Lancamento no SEFIP/GFIP": ["SEFIP"],
+  "Preenchimento e fechamento do EFD-Reinf": ["eSocial; EFD-Reinf"],
+  "Transmissao da DCTFWeb": ["DCTFWeb"],
+  "Recolhimento de GPS": ["SIAFI; Receita Federal"],
+  "Envio de IRRF ao fornecedor ou colaborador externo": ["E-mail"],
+  "Geracao e pagamento de guia de ISS": ["Portal ISS; SIAFI"],
+  "Conferencia do despacho decisorio": ["SEI"],
+  "Preenchimento da planilha de acompanhamento": ["Planilha"],
+  "Despacho autorizando pagamento para o campus": ["SEI"],
+  "Conferência dos comprovantes de pagamento recebidos do campus": ["SEI; Planilha"],
+  "Verificacao do SICAF valido": ["SICAF"],
+  "Conferencia dos comprovantes de liquido e retencoes": ["SIAFI; Planilha"],
+  "Encaminhamento para COERG apos conferencia": ["SEI"],
+  "Emissao do comprovante de IRRF": ["SIAFI; Planilha"],
+  "Envio por e-mail ao fornecedor ou colaborador": ["E-mail"],
+  "Emissao de Nota de Lancamento (NL)": ["SIAFI"],
+  "Emissao de Programacao Financeira (PF)": ["SIAFI"],
+  "Emissao de Nota de Sistema (NS)": ["SIAFI"],
+  "Consulta e acompanhamento de saldo financeiro": ["SIAFI; Tesouro Gerencial"],
+  "Envio de Comunica no SIAFI": ["SIAFI"],
+  "Emissao de relatorio gerencial no Tesouro Gerencial": ["Tesouro Gerencial"],
+  "Participacao em reuniao": ["Teams; Presencial"],
+  "Participacao em treinamento ou curso": ["Teams; Plataforma EAD"],
+  "Participacao em comissao ou grupo de trabalho": ["Presencial; SEI"],
+  "Elaboracao de ata ou lista de presenca": ["SEI; Planilha"],
+  "Consultas das OBs canceladas no SIAFI": ["SIAFI"],
+  "Preenchimento de planilha de controle das OBs": ["Planilha"],
+  "Emissao de lista de credores": ["SIAFI"],
+  "E-mail de consulta ao campus ou fornecedor": ["E-mail"],
+  "Regularizacao da OB no SIAFI": ["SIAFI"],
+  "Despacho de regularizacao no SEI": ["SEI"]
+};
+
+function getSistemasParaAtividades(ativsSelecionadas){
+  var todosSistemas = {};
+  ativsSelecionadas.forEach(function(atv){
+    // check exact match first
+    var sists = sistemasAtividade[atv];
+    if(!sists){
+      // try partial match
+      Object.keys(sistemasAtividade).forEach(function(k){
+        if(atv.toLowerCase().indexOf(k.toLowerCase())>=0 || k.toLowerCase().indexOf(atv.toLowerCase())>=0){
+          sists = sistemasAtividade[k];
+        }
+      });
+    }
+    // also learn from history
+    registros.forEach(function(r){
+      if(r.atividades && r.atividades.indexOf(atv)>=0 && r.sistemas){
+        r.sistemas.split(';').forEach(function(s){
+          var t=s.trim();if(t) todosSistemas[t]=(todosSistemas[t]||0)+1;
+        });
+      }
+    });
+    if(sists) sists.forEach(function(s){
+      s.split(';').forEach(function(x){
+        var t=x.trim();if(t) todosSistemas[t]=(todosSistemas[t]||0)+2;
+      });
+    });
+  });
+  // return sorted by frequency
+  return Object.keys(todosSistemas).sort(function(a,b){return todosSistemas[b]-todosSistemas[a];});
+}
+
+// ── Memória de processo SEI ───────────────────────────────────
+function onSeiInput(){
+  var sei = document.getElementById('sei').value.trim();
+  var box = document.getElementById('sei-historico');
+  if(sei.length < 8){box.classList.remove('show');return;}
+  var matches = registros.filter(function(r){
+    return r.sei && r.sei.indexOf(sei) >= 0;
+  });
+  if(!matches.length){box.classList.remove('show');return;}
+  // group by tipo+atividades
+  var vistos = {};
+  matches.forEach(function(r){
+    var key = r.tipo+'||'+r.atividades;
+    if(!vistos[key]) vistos[key]={tipo:r.tipo,atividades:r.atividades,sistemas:r.sistemas,count:0};
+    vistos[key].count++;
+  });
+  var html='<div class="sei-hist-title"><span>Ja feito neste processo ('+matches.length+'x)</span></div>';
+  Object.values(vistos).slice(0,3).forEach(function(v,i){
+    html+='<div class="sei-hist-item">';
+    html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">';
+    html+='<div><div class="sei-hist-tipo">'+v.tipo+'</div>';
+    html+='<div class="sei-hist-ativs">'+v.atividades+'</div></div>';
+    html+='<button class="sei-hist-btn" onclick="aplicarHistoricoSEI('+i+')">Usar</button>';
+    html+='</div></div>';
+  });
+  box.setAttribute('data-matches', JSON.stringify(Object.values(vistos).slice(0,3)));
+  box.innerHTML=html;
+  box.classList.add('show');
+}
+
+function aplicarHistoricoSEI(i){
+  var box=document.getElementById('sei-historico');
+  var matches=JSON.parse(box.getAttribute('data-matches'));
+  var m=matches[i];
+  // set tipo
+  var sel=document.getElementById('tipo');
+  sel.value=m.tipo;
+  onTipoChangeComIA();
+  // after tipo renders, set complemento with extra atividades not in padrao
+  setTimeout(function(){
+    var cf=config.find(function(c){return c.tipo===m.tipo;});
+    if(!cf) return;
+    var padroes=cf.atividades.filter(function(a){return a.padrao;}).map(function(a){return a.texto;});
+    var todas=m.atividades.split(';').map(function(a){return a.trim();});
+    var extras=todas.filter(function(a){return padroes.indexOf(a)<0 && a;});
+    if(extras.length){
+      document.getElementById('complemento').value=extras.join('; ');
+      document.getElementById('comp-field').style.display='block';
+    }
+    // check optional atividades
+    cf.atividades.forEach(function(a,idx){
+      if(!a.padrao && todas.indexOf(a.texto)>=0){
+        var cb=document.getElementById('atv'+idx);
+        if(cb) cb.checked=true;
+      }
+    });
+    atualizarSistemas();
+  },100);
+  box.classList.remove('show');
+  showToast('Preenchido com base no historico!');
 }
 
 function pitCalc(){
