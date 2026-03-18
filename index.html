@@ -121,9 +121,9 @@ textarea{resize:vertical;min-height:64px}
 .ia-chat-input button:hover{background:#2E75B6}
 
 
-.drag-handle{cursor:grab;color:#ccc;padding:0 6px;flex-shrink:0;user-select:none;font-size:16px}
-.drag-handle:hover{color:#888}
-.drag-handle:active{cursor:grabbing}
+.drag-handle{cursor:grab;color:#ccc;padding:0 8px;flex-shrink:0;user-select:none;font-size:18px;line-height:1;touch-action:none}
+.drag-handle:hover{color:#2E75B6}
+.drag-handle:active{cursor:grabbing;color:#1F3864}
 .dragging{opacity:0.4;border:2px dashed #2E75B6 !important}
 .drag-over{border-top:2px solid #2E75B6 !important}
 
@@ -911,14 +911,27 @@ function iaAtualizarSugestoes(){
 }
 
 
-// ── Drag & Drop universal ──────────────────────────────────────
+// ── Drag & Drop via alca ──────────────────────────────────────
 var dragSrc = null;
 var dragKey = null;
 var dragCi = -1;
+var dragAllowed = false;
 
 function makeDraggable(el, key, ci){
-  el.setAttribute('draggable','true');
+  // draggable ativado apenas via mousedown na alca
+  var handle = el.querySelector('.drag-handle');
+  if(handle){
+    handle.addEventListener('mousedown', function(){
+      dragAllowed = true;
+      el.setAttribute('draggable','true');
+    });
+  }
+  el.addEventListener('mouseup', function(){
+    dragAllowed = false;
+    el.setAttribute('draggable','false');
+  });
   el.addEventListener('dragstart',function(e){
+    if(!dragAllowed){ e.preventDefault(); return; }
     dragSrc=el; dragKey=key; dragCi=ci;
     e.dataTransfer.effectAllowed='move';
     e.dataTransfer.setData('text/plain', el.getAttribute('data-drag-idx'));
@@ -926,14 +939,16 @@ function makeDraggable(el, key, ci){
   });
   el.addEventListener('dragend',function(){
     el.classList.remove('dragging');
-    document.querySelectorAll('.drag-over').forEach(function(x){x.classList.remove('drag-over');});
+    el.setAttribute('draggable','false');
+    dragAllowed=false;
     dragSrc=null;
+    document.querySelectorAll('.drag-over').forEach(function(x){x.classList.remove('drag-over');});
   });
   el.addEventListener('dragover',function(e){
     e.preventDefault();
     e.dataTransfer.dropEffect='move';
-    if(dragSrc && el!==dragSrc && el.getAttribute('data-drag-key')===dragKey) {
-      document.querySelectorAll('.drag-over').forEach(function(x){x.classList.remove('drag-over');});
+    if(dragSrc && el!==dragSrc && el.getAttribute('data-drag-key')===dragKey){
+      document.querySelectorAll('[data-drag-key="'+dragKey+'"].drag-over').forEach(function(x){x.classList.remove('drag-over');});
       el.classList.add('drag-over');
     }
   });
@@ -943,11 +958,11 @@ function makeDraggable(el, key, ci){
   el.addEventListener('drop',function(e){
     e.preventDefault();e.stopPropagation();
     el.classList.remove('drag-over');
-    if(!dragSrc || dragSrc===el) return;
+    if(!dragSrc||dragSrc===el) return;
     if(dragKey!==el.getAttribute('data-drag-key')) return;
-    if(dragKey==='atv' && dragCi !== parseInt(el.getAttribute('data-drag-ci'))) return;
-    var fromIdx = parseInt(dragSrc.getAttribute('data-drag-idx'));
-    var toIdx = parseInt(el.getAttribute('data-drag-idx'));
+    if(dragKey==='atv' && dragCi!==parseInt(el.getAttribute('data-drag-ci'))) return;
+    var fromIdx=parseInt(dragSrc.getAttribute('data-drag-idx'));
+    var toIdx=parseInt(el.getAttribute('data-drag-idx'));
     if(isNaN(fromIdx)||isNaN(toIdx)) return;
     if(dragKey==='tipo'){
       var moved=config.splice(fromIdx,1)[0];
