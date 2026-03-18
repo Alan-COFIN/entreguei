@@ -293,74 +293,127 @@ var editAtvIdx = {ci:-1,ai:-1};
 var editTipoIdx = -1;
 
 var defaultConfig = [
-  {tipo:"Liquidacao da NF/FAT",sistemas:"SICAF; SEI; SIAFI; Planilha REINF",atividades:[
-    {texto:"Consulta do SICAF",padrao:true},{texto:"Consulta do Simples Nacional",padrao:true},
-    {texto:"Aprovacao da NF no Contratos",padrao:true},{texto:"Despacho da NS para COERG",padrao:true},
+  {tipo:"Atendimento aos campi e setores quanto a orientacoes tecnicas",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
+    {texto:"Orientacao tecnica por e-mail",padrao:true},
+    {texto:"Orientacao tecnica por WhatsApp",padrao:true},
+    {texto:"Solicitacao de correcao de NP/RP ao campus",padrao:false},
+    {texto:"Solicitacao de alteracao ou inclusao de deducao federal/INSS",padrao:false},
+    {texto:"Atendimento presencial ou por videoconferencia",padrao:false},
+    {texto:"Registro de atendimento em planilha de controle",padrao:false}]},
+  {tipo:"Atendimento aos fornecedores quanto aos pagamentos",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
+    {texto:"Atendimento sobre pagamento pendente",padrao:true},
+    {texto:"Esclarecimento sobre retencoes tributarias",padrao:true},
+    {texto:"Informe de previsao de pagamento",padrao:false},
+    {texto:"Solicitacao de nota fiscal ou documentacao faltante",padrao:false},
+    {texto:"Verificacao de dados bancarios do fornecedor",padrao:false}]},
+  {tipo:"Atendimento as determinacoes e demandas de orgaos externos",sistemas:"SEI; E-mail; SIAFI",atividades:[
+    {texto:"Elaboracao de oficio ou despacho de resposta",padrao:true},
+    {texto:"Levantamento de informacoes solicitadas",padrao:true},
+    {texto:"Envio de documentacao ao orgao externo",padrao:false},
+    {texto:"Registro e acompanhamento no SEI",padrao:false},
+    {texto:"Consulta ao setor juridico ou superior",padrao:false}]},
+  {tipo:"Atividades referentes a Liquidacao de Despesas",sistemas:"SIAFI; SEI; SICAF; Contratos; Planilha REINF",atividades:[
+    {texto:"Consulta do SICAF",padrao:true},
+    {texto:"Consulta do Simples Nacional",padrao:true},
+    {texto:"Aprovacao da NF no Contratos",padrao:true},
+    {texto:"Conferencia do despacho para liquidacao",padrao:true},
+    {texto:"Despacho da Nota de Sistema (NS) para COERG",padrao:true},
     {texto:"Lancamento de encargo no drive REINF",padrao:true},
-    {texto:"Conferencia do despacho para liquidacao",padrao:false}]},
-  {tipo:"Pagamento da NF/FAT",sistemas:"SEI; SIAFI; Planilha REINF",atividades:[
-    {texto:"Conferencia do despacho decisorio",padrao:true},{texto:"Conferencia da liquidacao",padrao:true},
-    {texto:"Pagamento da liquidacao",padrao:true},{texto:"Lancamento no drive REINF",padrao:true},
-    {texto:"Despacho da OB para COERG",padrao:true},{texto:"Geracao da Guia do ISS",padrao:false},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}]},
-  {tipo:"Liquidacao de Bolsas (DSAES)",sistemas:"SIAFI; SEI; Planilha",atividades:[
-    {texto:"Verificacao dos beneficiarios e lista de credores",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},{texto:"Despacho da NS para COERG",padrao:true},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}]},
-  {tipo:"Pagamento de Bolsas",sistemas:"SIAFI; SEI; E-mail",atividades:[
-    {texto:"Confirmacao da lista de beneficiarios e LCs",padrao:true},
-    {texto:"Conferencia da liquidacao",padrao:true},{texto:"Fechamento das LCs",padrao:true},
-    {texto:"Pagamento da liquidacao",padrao:true},{texto:"Despacho da OB para COERG",padrao:true},
+    {texto:"Verificacao dos beneficiarios e lista de credores",padrao:false},
+    {texto:"Geracao de Lista de Fatura",padrao:false},
+    {texto:"Liquidacao no SIAFI",padrao:false},
+    {texto:"Consulta de IRRF incidente",padrao:false},
+    {texto:"Conferencia da descricao do despacho e links",padrao:false},
+    {texto:"Encaminhamento para COERG",padrao:false}]},
+  {tipo:"Atividades referentes a liquidacao e pagamento da folha de pessoal",sistemas:"SIAFI; SEI; Planilha; Serpro",atividades:[
+    {texto:"Preenchimento da planilha pre-lancamento SIAFI",padrao:true},
+    {texto:"Solicitacao de recurso financeiro da folha no SIAFI",padrao:true},
+    {texto:"Consulta da liberacao do recurso financeiro",padrao:true},
+    {texto:"Anexo dos comprovantes de pagamento da folha",padrao:true},
+    {texto:"Despacho das OBs para COERG",padrao:true},
+    {texto:"Consulta no Serpro",padrao:false},
+    {texto:"Conferencia da programacao financeira",padrao:false},
+    {texto:"Liquidacao e pagamento do PASEP",padrao:false}]},
+  {tipo:"Atividades referentes ao Pagamento de Despesas",sistemas:"SIAFI; SEI; SICAF; Planilha REINF",atividades:[
+    {texto:"Conferencia do despacho decisorio",padrao:true},
+    {texto:"Conferencia da liquidacao",padrao:true},
+    {texto:"Pagamento da liquidacao no SIAFI",padrao:true},
+    {texto:"Lancamento no drive REINF apos pagamento",padrao:true},
+    {texto:"Despacho da OB para COERG",padrao:true},
+    {texto:"Consulta de recurso TED/Emenda antes do pagamento",padrao:true},
+    {texto:"Geracao da Guia do ISS",padrao:false},
+    {texto:"Criacao da Lista de Fatura do ISS",padrao:false},
+    {texto:"Lançamento da deducao federal no drive REINF",padrao:false},
+    {texto:"Confirmacao da lista de beneficiarios e LCs",padrao:false},
+    {texto:"Fechamento das LCs",padrao:false},
     {texto:"Informe por e-mail ao demandante",padrao:false},
-    {texto:"Consulta de recurso TED/Emenda",padrao:false}]},
-  {tipo:"Despacho de liquidacao",sistemas:"SEI",atividades:[
-    {texto:"Conferencia da descricao do despacho e links",padrao:true},
-    {texto:"Encaminhamento para COERG",padrao:true}]},
-  {tipo:"Despacho de pagamento",sistemas:"SEI; Planilha REINF",atividades:[
-    {texto:"Conferencia dos comprovantes de pagamento",padrao:true},
-    {texto:"Conferencia se foi lancado na planilha REINF",padrao:true},
-    {texto:"Encaminhamento para COERG",padrao:true}]},
-  {tipo:"Demanda para o Campus",sistemas:"SEI; Planilha",atividades:[
+    {texto:"Conferencia e pagamento das PCDPs no SIAFI",padrao:false}]},
+  {tipo:"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao",sistemas:"SEI; Tesouro Gerencial; Trello; Planilha",atividades:[
+    {texto:"Elaboracao de despacho",padrao:true},
+    {texto:"Envio de e-mail institucional",padrao:true},
+    {texto:"Emissao de relatorio gerencial",padrao:false},
+    {texto:"Preenchimento de planilha de controle",padrao:false},
+    {texto:"Tela de consulta no SIAFI ou Tesouro Gerencial",padrao:false},
+    {texto:"Registro no Trello",padrao:false},
+    {texto:"Participacao em alinhamento com a diretoria",padrao:false}]},
+  {tipo:"Controle e acompanhamento recursos especificos (TED/Emenda)",sistemas:"Planilha; Tesouro Gerencial; SIAFI; SIMEC; FNDE",atividades:[
+    {texto:"Preenchimento de planilha de controle TED/Emenda",padrao:true},
+    {texto:"Consulta de saldo disponivel no Tesouro Gerencial",padrao:true},
+    {texto:"Verificacao de liberacao de recurso no SIAFI",padrao:false},
+    {texto:"Preenchimento do sistema SIMEC",padrao:false},
+    {texto:"Preenchimento do sistema FNDE",padrao:false},
+    {texto:"Elaboracao de despacho de acompanhamento",padrao:false},
+    {texto:"E-mail de consulta ou informe sobre TED/Emenda",padrao:false}]},
+  {tipo:"Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)",sistemas:"SIAFI; SEFIP; DCTFWeb; eSocial; Portal RFB; Portal ISS",atividades:[
+    {texto:"Emissao de DARF",padrao:false},
+    {texto:"Lancamento no SEFIP/GFIP",padrao:false},
+    {texto:"Preenchimento e fechamento do EFD-Reinf",padrao:false},
+    {texto:"Transmissao da DCTFWeb",padrao:false},
+    {texto:"Recolhimento de GPS",padrao:false},
+    {texto:"Envio de IRRF ao fornecedor ou colaborador externo",padrao:false},
+    {texto:"Geracao e pagamento de guia de ISS",padrao:false},
+    {texto:"Conciliacao de obrigacoes tributarias",padrao:false},
+    {texto:"Elaboracao de despacho ou oficio tributario",padrao:false}]},
+  {tipo:"Elaboracao e revisao de fluxos de processos e manuais",sistemas:"SEI; Word; Drive",atividades:[
+    {texto:"Elaboracao de novo fluxo de processo",padrao:false},
+    {texto:"Revisao de manual ou procedimento existente",padrao:false},
+    {texto:"Participacao em reuniao de alinhamento para padronizacao",padrao:false},
+    {texto:"Elaboracao de despacho com solicitacao de aprovacao",padrao:false},
+    {texto:"Publicacao ou divulgacao do documento elaborado",padrao:false}]},
+  {tipo:"Envio de demandas (liquidacao e pagamento) para os campi",sistemas:"SEI; Planilha",atividades:[
     {texto:"Conferencia do despacho decisorio",padrao:true},
     {texto:"Conferencia da liquidacao",padrao:true},
     {texto:"Preenchimento da planilha de acompanhamento",padrao:true},
-    {texto:"Despacho autorizando pagamento para o campus",padrao:true}]},
-  {tipo:"Liquidacao da folha de pessoal",sistemas:"SIAFI; Planilha",atividades:[
-    {texto:"Preenchimento da planilha pre-lancamento SIAFI",padrao:true},
-    {texto:"Solicitacao de recurso financeiro da folha no SIAFI",padrao:true}]},
-  {tipo:"Pagamento da folha de pessoal",sistemas:"SIAFI; SEI",atividades:[
-    {texto:"Consulta da liberacao do recurso financeiro",padrao:true},
-    {texto:"Anexo dos comprovantes de pagamento",padrao:true},
-    {texto:"Despacho das OBs para COERG",padrao:true}]},
-  {tipo:"Liquidacao PCDP",sistemas:"SIAFI; SEI",atividades:[
-    {texto:"Conferencia e liquidacao das PCDPs no SIAFI",padrao:true}]},
-  {tipo:"Pagamento PCDP",sistemas:"SIAFI; SEI",atividades:[
-    {texto:"Conferencia e pagamento das PCDPs no SIAFI",padrao:true}]},
-  {tipo:"Regularizacao de pagamento (OBs canceladas)",sistemas:"SIAFI; E-mail",atividades:[
-    {texto:"Consulta das OBs canceladas",padrao:true},
-    {texto:"Preenchimento de planilha das OBs",padrao:true},
-    {texto:"Emissao de lista de credores",padrao:true},
-    {texto:"E-mail de consulta",padrao:false},{texto:"Regularizacao",padrao:false}]},
-  {tipo:"Atendimento aos campi e setores",sistemas:"E-mail; WhatsApp Institucional; SEI",atividades:[
-    {texto:"Orientacao tecnica por e-mail",padrao:true},
-    {texto:"Orientacao tecnica por WhatsApp",padrao:false},
-    {texto:"Solicitacao de correcao de NP/RP",padrao:false}]},
-  {tipo:"Atendimento aos fornecedores",sistemas:"E-mail; WhatsApp Institucional",atividades:[
-    {texto:"Atendimento sobre pagamento pendente",padrao:true},
-    {texto:"Esclarecimento de retencoes tributarias",padrao:false}]},
-  {tipo:"Cumprimento de obrigacoes tributarias",sistemas:"SIAFI; SEFIP; DCTFWeb; eSocial",atividades:[
-    {texto:"Emissao de DARF",padrao:false},{texto:"Lancamento no SEFIP/GFIP",padrao:false},
-    {texto:"Lancamento no EFD-Reinf / DCTFWeb",padrao:false},
-    {texto:"Envio de IRRF ao fornecedor ou colaborador",padrao:false}]},
-  {tipo:"Auxilio a DIRCF - Assuntos Diversos",sistemas:"SEI; Tesouro Gerencial; Trello",atividades:[
-    {texto:"Elaboracao de despacho",padrao:false},{texto:"Emissao de relatorio",padrao:false},
-    {texto:"Registro no Trello",padrao:false},{texto:"Preenchimento de planilha",padrao:false}]},
-  {tipo:"Controle recursos especificos (TED/Emenda)",sistemas:"Planilha; Tesouro Gerencial",atividades:[
-    {texto:"Preenchimento de planilha de controle TED/Emenda",padrao:true}]},
-  {tipo:"Participacao em atividades",sistemas:"Teams; Presencial",atividades:[
+    {texto:"Despacho autorizando pagamento para o campus",padrao:true},
+    {texto:"Envio de e-mail de comunicacao ao campus",padrao:false},
+    {texto:"Acompanhamento do retorno do campus",padrao:false}]},
+  {tipo:"Envio de IRRF aos fornecedores e colaboradores externos",sistemas:"E-mail; Planilha; SEI",atividades:[
+    {texto:"Emissao do comprovante de IRRF",padrao:true},
+    {texto:"Envio por e-mail ao fornecedor ou colaborador",padrao:true},
+    {texto:"Elaboracao de declaracao de rendimentos",padrao:false},
+    {texto:"Emissao de relatorio de retencoes",padrao:false},
+    {texto:"Registro no controle interno de IRRF enviados",padrao:false}]},
+  {tipo:"Gestao de Recursos Financeiros",sistemas:"SIAFI; Tesouro Gerencial; SEI",atividades:[
+    {texto:"Emissao de nota de lancamento (NL) no SIAFI",padrao:false},
+    {texto:"Emissao de programacao financeira (PF)",padrao:false},
+    {texto:"Emissao de nota de sistema (NS)",padrao:false},
+    {texto:"Consulta e acompanhamento de saldo financeiro",padrao:false},
+    {texto:"Envio de Comunica no SIAFI",padrao:false},
+    {texto:"Emissao de relatorio gerencial no Tesouro Gerencial",padrao:false},
+    {texto:"Elaboracao de despacho de gestao financeira",padrao:false}]},
+  {tipo:"Participacao em atividades",sistemas:"Teams; Presencial; Plataforma EAD",atividades:[
     {texto:"Participacao em reuniao",padrao:false},
-    {texto:"Participacao em treinamento ou curso",padrao:false}]},
-  {tipo:"Ferias",sistemas:"-",atividades:[{texto:"Ferias",padrao:true}]}
+    {texto:"Participacao em treinamento ou curso",padrao:false},
+    {texto:"Participacao em comissao ou grupo de trabalho",padrao:false},
+    {texto:"Elaboracao de ata ou lista de presenca",padrao:false},
+    {texto:"Registro de certificado ou declaracao",padrao:false}]},
+  {tipo:"Regularizacao de pagamento (OBs canceladas)",sistemas:"SIAFI; E-mail; Planilha",atividades:[
+    {texto:"Consulta das OBs canceladas no SIAFI",padrao:true},
+    {texto:"Preenchimento de planilha de controle das OBs",padrao:true},
+    {texto:"Emissao de lista de credores",padrao:true},
+    {texto:"E-mail de consulta ao campus ou fornecedor",padrao:false},
+    {texto:"Regularizacao da OB no SIAFI",padrao:false},
+    {texto:"Despacho de regularizacao no SEI",padrao:false}]}
 ];
 
 var defaultPit = [
@@ -370,7 +423,7 @@ var defaultPit = [
   {titulo:"Atividades referentes a Liquidacao de Despesas",tipo:"variavel",horas:30,peso:5},
   {titulo:"Atividades referentes a liquidacao e pagamento da folha de pessoal",tipo:"fixa",horas:18,peso:1},
   {titulo:"Atividades referentes ao Pagamento de Despesas",tipo:"variavel",horas:55,peso:6},
-  {titulo:"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria",tipo:"variavel",horas:5,peso:2},
+  {titulo:"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao",tipo:"variavel",horas:5,peso:2},
   {titulo:"Controle e acompanhamento recursos especificos (TED/Emenda)",tipo:"variavel",horas:4,peso:2},
   {titulo:"Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)",tipo:"variavel",horas:5,peso:2},
   {titulo:"Elaboracao e revisao de fluxos de processos e manuais",tipo:"fixa",horas:3,peso:1},
