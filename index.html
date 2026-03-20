@@ -797,13 +797,28 @@ function carregarConfigSheets(){
     if(d.status==='ok' && d.config){
       try{
         var remoto = JSON.parse(d.config);
-        if(remoto && remoto.length){
+        // Valida se a config remota está íntegra (verifica encoding de acentos)
+        function configValida(arr){
+          if(!arr || !arr.length) return false;
+          // Checa se pelo menos um tipo contém caractere acentuado esperado
+          // Config corrompida teria "DistribuiÃ§Ã£o" em vez de "Distribuição"
+          var joined = arr.map(function(c){return c.tipo||'';}).join('');
+          // Se tiver sequência típica de UTF-8 mal decodificado, rejeita
+          if(joined.indexOf('Ã')>=0 || joined.indexOf('â€')>=0) return false;
+          return true;
+        }
+        if(remoto && remoto.length && configValida(remoto)){
           config = remoto;
           localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
           localStorage.setItem('cofin_config_version', CONFIG_VERSION);
           popularSelect();
           renderConfig();
           setSyncStatus('ok','Config sincronizada');
+      var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
+        } else if(remoto && remoto.length && !configValida(remoto)){
+          // Config corrompida no Sheets — usa local e reempurra a correta
+          setSyncStatus('ok','Config local restaurada');
+          sincronizarConfig();
       var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
         }
       }catch(e){
@@ -1933,7 +1948,12 @@ function aplicarDetalheSug(sug){
 // ── Triagem rápida do dia ─────────────────────────────────────
 function registrarTriagemDia(){
   var tipo = 'Triagem e Distribuição de Processos';
-  var cf = config.find(function(c){return c.tipo===tipo;});
+  // Busca tolerante: compara normalizando acentos para evitar problema de encoding
+  function normaliza(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+  var tipoNorm = normaliza(tipo);
+  var cf = config.find(function(c){ return normaliza(c.tipo||'')===tipoNorm; });
+  // Se não achou na config atual, tenta no defaultConfig (fallback seguro)
+  if(!cf){ cf = defaultConfig.find(function(c){ return normaliza(c.tipo||'')===tipoNorm; }); }
   if(!cf){showToast('Tipo de triagem não encontrado');return;}
   var ativs = cf.atividades.filter(function(a){return a.padrao;}).map(function(a){return a.texto;}).join('; ');
   var qtdEl = document.getElementById('triagem-qtd');
@@ -1944,10 +1964,10 @@ function registrarTriagemDia(){
     id: Date.now(),
     sei: '',
     data: today(),
-    tipo: tipo,
+    tipo: cf.tipo,
     atividades: ativs,
     campus: campusPadrao || 'RT',
-    sistemas: 'SEI',
+    sistemas: cf.sistemas || 'SEI',
     detalhes: hora + ' — ' + qtd + ' processo(s) analisado(s)',
     synced: false
   };
