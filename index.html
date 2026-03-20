@@ -12,7 +12,178 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',system-ui,sans-serif;font-size:14px;background:#f4f5f7;color:#1a1a1a;min-height:100vh}
+header{background:#0B6E4F;color:#fff;padding:0 24px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+header h1{font-size:15px;font-weight:900;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px}
+.sync-status{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;letter-spacing:0.5px}
+.sync-ok{background:rgba(110,231,183,0.2);color:#6EE7B7}
+.sync-err{background:rgba(255,100,100,0.2);color:#ffd0d0}
+.sync-ing{background:rgba(255,255,255,0.15);color:#fff}
+.container{max-width:640px;margin:0 auto;padding:20px 16px}
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #eee;padding:0 24px;max-width:640px;margin:0 auto}
+.tab{padding:11px 14px;font-size:12px;font-weight:700;color:#aaa;border-bottom:2px solid transparent;cursor:pointer;letter-spacing:0.3px;border:none;background:none}
+.tab.active{color:#0B6E4F;border-bottom:2px solid #0B6E4F}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border-radius:10px;border:1px solid #eee;padding:18px;margin-bottom:12px}
+.field{margin-bottom:14px}
+label{display:block;font-size:10px;font-weight:700;color:#aaa;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.8px}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid #eee;border-radius:8px;font-size:13px;background:#fff;color:#1a1a1a;font-family:inherit;transition:border-color 0.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0B6E4F}
+textarea{resize:vertical;min-height:60px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.atividades-box{border:1.5px solid #eee;border-radius:8px;overflow:hidden}
+.atv-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:0.5px solid #f5f5f5;cursor:pointer;transition:background 0.15s}
+.atv-item:last-child{border-bottom:none}
+.atv-item:hover{background:#f8fffb}
+.atv-item input[type=checkbox]{width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:#0B6E4F;border-radius:3px}
+.atv-item .atv-label{font-size:13px;flex:1;cursor:pointer;color:#1a1a1a}
+.atv-item.padrao .atv-label{font-weight:700}
+.badge-p{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;background:#f0fdf4;color:#065f46;font-weight:700;letter-spacing:0.3px;vertical-align:middle}
+.sistemas-box{margin-top:8px;padding:8px 12px;background:#f0fdf4;border-radius:7px;font-size:12px;color:#065f46;border:1px solid #d1fae5;font-weight:600}
+.hint{font-size:11px;color:#aaa;margin-bottom:8px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.btn-p{height:44px;background:#0B6E4F;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;letter-spacing:0.2px;transition:background 0.2s}
+.btn-p:hover{background:#0a5c42}
+.btn-sec{height:44px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;color:#444;font-family:inherit;transition:background 0.2s}
+.btn-sec:hover{background:#f5f5f5}
+.btn-sm{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;border:1.5px solid #e0e0e0;background:#fff;color:#444;font-family:inherit}
+.btn-sm:hover{background:#f5f5f5}
+.btn-sm.d{border-color:#fecaca;color:#dc2626}
+.btn-sm.d:hover{background:#fff5f5}
+.btn-sm.s{border-color:#bbf7d0;color:#065f46;background:#f0fdf4}
+.btn-sm.s:hover{background:#dcfce7}
+.btn-exp{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#fff;border:1.5px solid #eee;border-radius:9px;font-size:13px;cursor:pointer;color:#444;font-weight:700;margin-bottom:14px;font-family:inherit}
+.btn-exp:hover{background:#f5f5f5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:#fff;border-radius:10px;padding:14px;text-align:center;border:1px solid #eee}
+.stat .n{font-size:26px;font-weight:900;color:#0B6E4F}
+.stat .l{font-size:10px;color:#aaa;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.empty{text-align:center;padding:40px 20px;color:#ccc;font-size:13px;font-weight:600}
+.reg-card{background:#fff;border-radius:10px;padding:13px 16px;margin-bottom:8px;border:1px solid #eee;border-left:3px solid #0B6E4F;transition:box-shadow 0.15s}
+.reg-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.reg-card .tp{font-size:10px;font-weight:700;color:#0B6E4F;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.reg-card .pc{font-size:14px;font-weight:800;color:#1a1a1a}
+.reg-card .av{font-size:12px;color:#666;margin-top:4px;line-height:1.6}
+.reg-card .mt{font-size:11px;color:#bbb;margin-top:6px;display:flex;gap:12px;flex-wrap:wrap;font-weight:600}
+.reg-card .ac{display:flex;gap:6px;margin-top:8px}
+.cloud-badge{font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:700;vertical-align:middle}
+.cloud-ok{background:#f0fdf4;color:#065f46}
+.cloud-pend{background:#fef9e7;color:#b45309}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:16px;color:#0B6E4F}
+.modal-footer{display:flex;gap:8px;margin-top:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0B6E4F;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+.cfg-tipo{background:#fff;border-radius:10px;margin-bottom:10px;border:1px solid #eee;overflow:hidden}
+.cfg-hdr{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.cfg-hdr:hover{background:#fafafa}
+.cfg-title{font-size:13px;font-weight:800;color:#1a1a1a}
+.cfg-meta{font-size:11px;color:#aaa;margin-top:2px;font-weight:600}
+.cfg-body{padding:12px 16px;display:none;border-top:1px solid #f5f5f5}
+.cfg-body.open{display:block}
+.cfg-atv{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #f5f5f5;flex-wrap:wrap}
+.cfg-atv:last-child{border-bottom:none}
+.cfg-atv input[type=checkbox]{width:15px;height:15px;accent-color:#0B6E4F;flex-shrink:0;cursor:pointer}
+.cfg-atv-txt{flex:1;font-size:13px;min-width:120px;font-weight:600}
+.cfg-atv-tp{font-size:10px;color:#bbb;min-width:42px;text-align:right;font-weight:700}
+.add-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;align-items:center;flex-wrap:wrap}
+.add-row input{flex:1;min-width:140px;padding:7px 10px;font-size:13px}
+.tgl{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#666;white-space:nowrap;font-weight:700;font-family:inherit}
+.tgl.on{background:#f0fdf4;border-color:#bbf7d0;color:#065f46}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.st{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px}
+.pit-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:0.5px solid #f5f5f5;flex-wrap:wrap}
+.pit-row:last-child{border-bottom:none}
+.pit-row:hover{background:#fafafa}
+.pit-ent{flex:1;min-width:160px;font-size:13px;font-weight:600}
+.pit-btn{font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#666;white-space:nowrap;font-weight:700;font-family:inherit}
+.pit-btn.fixa{background:#f0fdf4;border-color:#bbf7d0;color:#065f46}
+.pit-btn.variavel{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+.pit-inp{width:68px;padding:6px 8px;border:1.5px solid #eee;border-radius:6px;font-size:13px;text-align:center;font-family:inherit}
+.pit-inp:focus{outline:none;border-color:#0B6E4F}
+.pit-h{width:44px;text-align:center;font-size:14px;font-weight:900;padding:6px 0}
+.pit-bar{flex:1;min-width:60px;height:5px;background:#eee;border-radius:3px;overflow:hidden}
+.pit-bar-f{height:100%;border-radius:3px;background:#0B6E4F;transition:width 0.3s}
+.move-btns{display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+.move-btn{width:22px;height:18px;border:1px solid #eee;background:#fff;cursor:pointer;border-radius:3px;font-size:11px;color:#aaa;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit}
+.move-btn:hover{background:#f0fdf4;border-color:#bbf7d0;color:#065f46}
+.campus-selector{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;align-items:center}
+.campus-tag{padding:5px 12px;border-radius:20px;border:1.5px solid #eee;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:#888;transition:all 0.15s;user-select:none}
+.campus-tag:hover{border-color:#0B6E4F;color:#0B6E4F}
+.campus-tag.sel{background:#0B6E4F;border-color:#0B6E4F;color:#fff}
+.campus-add-btn{padding:5px 10px;border-radius:20px;border:1.5px dashed #ddd;background:#fff;font-size:12px;cursor:pointer;color:#aaa;transition:all 0.15s;font-family:inherit}
+.campus-add-btn:hover{border-color:#0B6E4F;color:#0B6E4F}
+.campus-extra{margin-top:6px;display:none}
+.campus-extra.show{display:flex;gap:6px;align-items:center}
+.campus-padrao-row{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:8px;padding:7px 10px;background:#f8fffe;border-radius:7px;border:1px solid #eee}
+.modelos-btn{font-size:11px;padding:4px 12px;border-radius:6px;cursor:pointer;border:1.5px solid #d1fae5;background:#f0fdf4;color:#065f46;font-weight:700;margin-top:4px;display:inline-block;font-family:inherit}
+.modelos-btn:hover{background:#dcfce7}
+.modelos-dropdown{background:#fff;border:1.5px solid #eee;border-radius:10px;margin-top:6px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08);display:none}
+.modelos-dropdown.open{display:block}
+.modelo-item{padding:9px 14px;font-size:13px;cursor:pointer;border-bottom:0.5px solid #f5f5f5;color:#1a1a1a;line-height:1.4;display:flex;align-items:flex-start;gap:8px;font-weight:600}
+.modelo-item:last-child{border-bottom:none}
+.modelo-item:hover{background:#f8fffb}
+.modelo-item-txt{flex:1}
+.modelo-destaque{background:#fef9e7;padding:1px 3px;border-radius:3px;font-weight:800}
+.modelos-header{padding:8px 14px;background:#f8fffe;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between}
+.modelos-header span{font-size:10px;font-weight:700;color:#065f46;text-transform:uppercase;letter-spacing:0.5px}
+.autocomplete-box{position:relative}
+.autocomplete-list{position:absolute;left:0;right:0;background:#fff;border:1.5px solid #eee;border-radius:8px;z-index:50;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.08);display:none}
+.autocomplete-list.open{display:block}
+.autocomplete-item{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid #f5f5f5;font-weight:600}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:hover{background:#f8fffb}
+.autocomplete-item em{font-style:normal;font-weight:800;color:#0B6E4F}
+.ia-box{background:#f8fffb;border:1.5px solid #d1fae5;border-radius:10px;padding:13px;margin-top:10px}
+.ia-title{font-size:10px;font-weight:700;color:#065f46;margin-bottom:8px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:0.5px}
+.ia-sugestao{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:0.5px solid #e8f5e9;cursor:pointer;transition:background 0.15s;border-radius:4px}
+.ia-sugestao:last-child{border-bottom:none}
+.ia-sugestao:hover{background:#f0fdf4}
+.ia-sugestao-txt{flex:1;font-size:13px;color:#1a1a1a;font-weight:600}
+.ia-sugestao-cnt{font-size:11px;color:#6EE7B7;font-weight:700}
+.ia-loading{font-size:12px;color:#6EE7B7;padding:8px 0;display:flex;align-items:center;gap:8px;font-weight:600}
+.ia-chat{border:1.5px solid #eee;border-radius:10px;overflow:hidden;margin-top:10px}
+.ia-chat-msgs{padding:12px;min-height:80px;max-height:200px;overflow-y:auto;background:#fafafa}
+.ia-msg{margin-bottom:8px;font-size:13px;line-height:1.5}
+.ia-msg.user{text-align:right}
+.ia-msg.user span{background:#0B6E4F;color:#fff;padding:6px 12px;border-radius:12px 12px 2px 12px;display:inline-block;max-width:85%;font-weight:600}
+.ia-msg.bot span{background:#fff;border:1px solid #eee;padding:6px 12px;border-radius:12px 12px 12px 2px;display:inline-block;max-width:85%;font-weight:600}
+.ia-chat-input{display:flex;border-top:1px solid #eee}
+.ia-chat-input input{flex:1;padding:10px 12px;border:none;font-size:13px;background:#fff;font-family:inherit;font-weight:600}
+.ia-chat-input input:focus{outline:none}
+.ia-chat-input button{padding:10px 16px;background:#0B6E4F;color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit}
+.ia-chat-input button:hover{background:#0a5c42}
+.sei-historico{background:#fff;border:1.5px solid #eee;border-radius:10px;padding:12px 14px;margin-top:8px;display:none}
+.sei-historico.show{display:block}
+.sei-hist-title{font-size:10px;font-weight:700;color:#0B6E4F;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.sei-hist-item{font-size:12px;padding:5px 0;border-bottom:0.5px solid #f5f5f5;color:#555;line-height:1.4;font-weight:600}
+.sei-hist-item:last-child{border-bottom:none}
+.sei-hist-tipo{font-weight:800;color:#1a1a1a;font-size:12px}
+.sei-hist-ativs{color:#666;font-size:11px;margin-top:2px}
+.sei-hist-btn{font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1.5px solid #d1fae5;background:#f0fdf4;color:#065f46;font-weight:700;font-family:inherit}
+.sei-hist-btn:hover{background:#dcfce7}
+.sistemas-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#065f46;margin:2px;font-weight:700;cursor:pointer;border:1px solid #d1fae5}
+.sistemas-tag:hover{background:#dcfce7}
+.sistemas-tag.sel{background:#0B6E4F;color:#fff;border-color:#0B6E4F}
+.detalhe-sugestao{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.det-sug{font-size:11px;padding:3px 10px;border-radius:6px;border:1.5px solid #d1fae5;background:#f0fdf4;cursor:pointer;color:#065f46;font-weight:700;font-family:inherit}
+.det-sug:hover{background:#dcfce7}
+.triagem-btn{padding:0 16px;height:44px;background:#134E4A;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;transition:background 0.2s}
+.triagem-btn:hover{background:#0B6E4F}
+.lote-row{display:flex;gap:6px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;padding:10px;background:#f8fffe;border-radius:8px;border:1px solid #eee}
+.lote-row input{flex:1;min-width:120px;padding:7px 10px;font-size:13px}
+.lote-add{display:flex;align-items:center;gap:8px;margin-top:4px}
+.toggle-padrao{font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#666;white-space:nowrap;font-weight:700;font-family:inherit}
+.toggle-padrao.on{background:#f0fdf4;border-color:#bbf7d0;color:#065f46}
+.pit-info-box{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;font-weight:600}
+.rel-por-tipo div{font-weight:600}
+.campus-extra input{flex:1;padding:7px 10px;font-size:13px}
+@media(max-width:520px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.cfg-hdr{flex-direction:column;align-items:flex-start;gap:8px}.pit-bar{display:none}.btn-row{grid-template-columns:1fr 1fr}}
+
 body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;background:#f5f6f8;color:#1a1a1a;min-height:100vh}
 header{background:#1F3864;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 header h1{font-size:16px;font-weight:600}
@@ -168,6 +339,29 @@ textarea{resize:vertical;min-height:64px}
 .sistemas-tag:hover{background:#c5cae9}
 .sistemas-tag.sel{background:#1F3864;color:#fff}
 
+
+.campus-selector{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+.campus-tag{padding:5px 12px;border-radius:20px;border:1.5px solid #e0e0e0;background:#fff;font-size:12px;font-weight:700;cursor:pointer;color:#555;transition:all 0.15s;user-select:none;letter-spacing:0.3px}
+.campus-tag:hover{border-color:#2E75B6;color:#2E75B6}
+.campus-tag.sel{background:#1F3864;border-color:#1F3864;color:#fff}
+.campus-add-btn{padding:5px 10px;border-radius:20px;border:1.5px dashed #ccc;background:#fff;font-size:12px;cursor:pointer;color:#888;transition:all 0.15s}
+.campus-add-btn:hover{border-color:#2E75B6;color:#2E75B6}
+.campus-extra{margin-top:6px;display:none}
+.campus-extra.show{display:flex;gap:6px;align-items:center}
+.campus-extra input{flex:1;padding:6px 10px;font-size:13px;border-radius:8px}
+
+
+.lote-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.lote-row input{flex:1;min-width:140px;padding:7px 10px;font-size:13px}
+.lote-row .btn-sm{flex-shrink:0}
+.lote-add{display:flex;align-items:center;gap:8px;margin-top:4px}
+.detalhe-sugestao{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.det-sug{font-size:11px;padding:3px 10px;border-radius:6px;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;color:#555}
+.det-sug:hover{border-color:#2E75B6;color:#2E75B6;background:#f0f7ff}
+.triagem-btn{width:100%;padding:11px;background:#134E4A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.triagem-btn:hover{background:#0D6B65}
+.campus-padrao-row{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:8px;padding:8px 12px;background:#f5f6f8;border-radius:8px}
+
 @media(max-width:520px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.cfg-hdr{flex-direction:column;align-items:flex-start;gap:8px}.pit-bar{display:none}}
 </style>
 </head>
@@ -201,6 +395,16 @@ textarea{resize:vertical;min-height:64px}
   </div>
 
   <div id="registro" class="section active">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <button class="triagem-btn" onclick="registrarTriagemDia()">
+        <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><polyline points="9 12 11 14 15 10"/></svg>
+        Triagem do dia
+      </button>
+      <div style="display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1.5px solid #d1fae5;border-radius:8px;padding:6px 12px">
+        <span style="font-size:11px;color:#065f46;font-weight:700">Processos:</span>
+        <input type="number" id="triagem-qtd" min="1" max="999" value="1" style="width:52px;padding:4px 8px;font-size:13px;border:1px solid #d1fae5;border-radius:6px;background:#fff;text-align:center;font-family:inherit;font-weight:700">
+      </div>
+    </div>
     <div class="card">
       <div class="row">
         <div class="field">
@@ -211,18 +415,33 @@ textarea{resize:vertical;min-height:64px}
         <div class="field"><label>Data</label><input type="date" id="data"></div>
       </div>
       <div class="field">
-        <label>Campus / Setor atendido <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
-        <div class="autocomplete-box">
-          <input type="text" id="campus" placeholder="Ex: Campus Cruzeiro do Sul, DIRCF, COERG..." oninput="acShow('campus','ac-campus')" onblur="acHide('ac-campus')">
-          <div class="autocomplete-list" id="ac-campus"></div>
+          <label>Campus / Setor <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+          <div class="campus-selector" id="campus-tags">
+            <span class="campus-tag" onclick="toggleCampus(this)">RT</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CCS</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CBO</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CRB</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CXA</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CSM</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">CTA</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">DIRCF</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">COERG</span>
+            <span class="campus-tag" onclick="toggleCampus(this)">PROAD</span>
+            <button class="campus-add-btn" onclick="toggleCampusExtra()" title="Adicionar outro">+</button>
+          </div>
+          <div class="campus-padrao-row">
+            <span style="color:#888;font-size:12px">Padrão:</span>
+            <span id="campus-padrao-label" style="font-size:12px;font-weight:600;color:#1F3864">Nenhum</span>
+            <button class="btn-sm s" onclick="salvarCampusPadrao()" style="margin-left:auto">Definir como padrão</button>
+          </div>
+          <div class="campus-extra" id="campus-extra">
+            <input type="text" id="campus-extra-input" placeholder="Digite outro setor...">
+            <button class="btn-sm s" onclick="adicionarCampusExtra()">Ok</button>
+          </div>
+          <input type="hidden" id="campus">
         </div>
-      </div>
       <div class="field"><label>Tipo de demanda principal</label><select id="tipo" onchange="onTipoChangeComIA()"><option value="">- Selecione o tipo -</option></select></div>
-      <div class="field">
-        <label>Tipos de demanda adicionais <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional — ex: liquidacao com INSS)</span></label>
-        <button type="button" class="modelos-btn" onclick="tiposSecundariosToggle()" style="margin-bottom:6px">+ Adicionar tipo secundario</button>
-        <div id="tipos-sec-list" style="display:none;border:1.5px solid #e8eaed;border-radius:8px;padding:10px;max-height:180px;overflow-y:auto" id="tipos-sec-list"></div>
-      </div>
+
       <div id="ativs-field" style="display:none" class="field">
         <label>Atividades realizadas</label>
         <p class="hint" style="margin-bottom:8px">As marcadas sao o padrao. Desmarque o que nao fez ou marque o que fez a mais.</p>
@@ -263,7 +482,41 @@ textarea{resize:vertical;min-height:64px}
         </div>
       </div>
 
-      <button class="btn-p" onclick="salvarRegistro()">Salvar registro</button>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <button class="triagem-btn" style="flex:1;margin-bottom:0" onclick="registrarTriagemDia()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><polyline points="9 12 11 14 15 10"/></svg>
+          Registrar triagem do dia
+        </button>
+        <div style="display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:8px;padding:6px 10px">
+          <span style="font-size:12px;color:#065f46;white-space:nowrap">Processos:</span>
+          <input type="number" id="triagem-qtd" min="1" max="999" value="1" style="width:52px;padding:4px 6px;font-size:13px;border:1px solid #bbf7d0;border-radius:6px;background:#fff;text-align:center">
+        </div>
+      </div>
+      <div id="lote-section" style="display:none" class="card" style="padding:14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#1F3864;margin-bottom:10px">Processos em lote — mesmo tipo e atividades</div>
+        <div id="lote-rows"></div>
+        <div class="lote-add">
+          <button class="btn-sm s" onclick="adicionarLoteRow()">+ Linha</button>
+          <button class="btn-p" style="flex:1;margin-top:0" onclick="salvarLote()">Salvar todos</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-p" onclick="salvarRegistro()" style="flex:1">
+          <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Salvar registro
+        </button>
+        <button class="btn-sec" id="lote-toggle-btn" onclick="toggleLote()" style="padding:0 18px;flex:none">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Lote
+        </button>
+      </div>
+    </div>
+    <div id="mini-hist" style="margin-top:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span id="mini-hist-label" style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px">Hoje — 0 registros</span>
+        <span style="font-size:11px;color:#0B6E4F;font-weight:700;cursor:pointer" onclick="irHistorico()">Ver historico completo →</span>
+      </div>
+      <div id="mini-hist-lista"></div>
     </div>
   </div>
 
@@ -285,9 +538,21 @@ textarea{resize:vertical;min-height:64px}
             <option value="">Todos os tipos</option>
           </select>
         </div>
-        <div style="flex:1;min-width:120px">
+        <div style="flex:2;min-width:200px">
           <label style="font-size:11px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px">Campus/Setor</label>
-          <input type="text" id="f-campus" placeholder="Filtrar..." oninput="renderHistorico()" style="padding:7px 10px;font-size:13px">
+          <div id="f-campus-tags" style="display:flex;flex-wrap:wrap;gap:4px">
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'RT')">RT</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CCS')">CCS</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CBO')">CBO</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CRB')">CRB</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CXA')">CXA</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CSM')">CSM</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'CTA')">CTA</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'DIRCF')">DIRCF</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'COERG')">COERG</span>
+            <span class="campus-tag" style="font-size:11px;padding:3px 10px" onclick="toggleFiltroC(this,'PROAD')">PROAD</span>
+          </div>
+          <input type="hidden" id="f-campus">
         </div>
         <button class="btn-sm" onclick="limparFiltros()" style="margin-bottom:1px">Limpar</button>
       </div>
@@ -428,7 +693,8 @@ var editIdx = -1;
 var editAtvIdx = {ci:-1,ai:-1};
 var editTipoIdx = -1;
 
-var defaultConfig = [{"tipo":"Atendimento aos campi e setores quanto a orientacoes tecnicas","sistemas":"E-mail; WhatsApp; SEI","atividades":[{"texto":"Orientacao tecnica por e-mail","padrao":true},{"texto":"Orientacao tecnica por WhatsApp","padrao":true},{"texto":"Solicitacao de correcao de NP/RP ao campus","padrao":true},{"texto":"Solicitacao de alteracao ou inclusao de deducao federal/INSS","padrao":false},{"texto":"Atendimento presencial ou por videoconferencia","padrao":false},{"texto":"Registro de atendimento em planilha de controle","padrao":false}]},{"tipo":"Atendimento aos fornecedores quanto aos pagamentos","sistemas":"E-mail; WhatsApp Institucional; SEI","atividades":[{"texto":"Atendimento sobre pagamento pendente","padrao":true},{"texto":"Esclarecimento sobre retencoes tributarias","padrao":true},{"texto":"Informe de previsao de pagamento","padrao":false},{"texto":"Solicitacao de nota fiscal ou documentacao faltante","padrao":false},{"texto":"Verificacao de dados bancarios do fornecedor","padrao":false}]},{"tipo":"Atendimento as determinacoes e demandas de orgaos externos","sistemas":"SEI; E-mail; SIAFI","atividades":[{"texto":"Elaboracao de oficio ou despacho de resposta","padrao":true},{"texto":"Levantamento de informacoes solicitadas","padrao":true},{"texto":"Envio de documentacao ao orgao externo","padrao":false},{"texto":"Registro e acompanhamento no SEI","padrao":false},{"texto":"Consulta ao setor juridico ou superior","padrao":false}]},{"tipo":"Atividades referentes a Liquidacao de Despesas","sistemas":"SIAFI; SEI; SICAF; Contratos; Planilha REINF","atividades":[{"texto":"Consulta do SICAF","padrao":true},{"texto":"Consulta do Simples Nacional","padrao":true},{"texto":"Conferência do Instrumento de Cobrança","padrao":true},{"texto":"Conferência de Despacho (Liquidação)","padrao":true},{"texto":"Apropriação da NF/FAT","padrao":true},{"texto":"Lancamento de encargo no drive REINF","padrao":true},{"texto":"Execução do DARF contábil INSS","padrao":false},{"texto":"Verificação Beneficiários / Lista de Credores","padrao":false},{"texto":"Geracao de Lista de Credores","padrao":false},{"texto":"Liquidacao SIAFI","padrao":false},{"texto":"Consulta de IRRF incidente","padrao":false},{"texto":"Encaminhamento para COERG","padrao":false}]},{"tipo":"Atividades referentes a liquidacao e pagamento da folha de pessoal","sistemas":"SIAFI; SEI; Planilha; Serpro","atividades":[{"texto":"Preenchimento da planilha pre-lancamento SIAFI","padrao":true},{"texto":"Solicitacao de recurso financeiro da folha no SIAFI","padrao":true},{"texto":"Consulta da liberacao do recurso financeiro","padrao":true},{"texto":"Anexo dos comprovantes de pagamento da folha","padrao":true},{"texto":"Despacho das OBs para COERG","padrao":true},{"texto":"Consulta no Serpro","padrao":false},{"texto":"Conferencia da programacao financeira","padrao":false},{"texto":"Liquidacao e pagamento do PASEP","padrao":false}]},{"tipo":"Atividades referentes ao Pagamento de Despesas","sistemas":"SIAFI; SEI; SICAF; Planilha REINF","atividades":[{"texto":"Conferência Despacho Decisório","padrao":true},{"texto":"Conferencia da liquidacao","padrao":true},{"texto":"Consulta do SICAF","padrao":true},{"texto":"Consulta de recurso TED/Emenda antes do pagamento","padrao":true},{"texto":"Geracao Guia do ISS","padrao":false},{"texto":"Criacao da Lista de Fatura do ISS","padrao":false},{"texto":"Pagamento da liquidacao no SIAFI","padrao":true},{"texto":"Lançamento REINF (Pós-Pagamento)","padrao":true},{"texto":"Fechamento LCs","padrao":false},{"texto":"Despacho OB p/ COERG","padrao":true},{"texto":"Lançamento Dedução Federal REINF","padrao":false},{"texto":"Confirmação Beneficiários / LCs","padrao":false},{"texto":"Informe do PG ao demandante (e-mail)","padrao":false},{"texto":"Conferência e Pagamento PCDPs (SIAFI)","padrao":false}]},{"tipo":"Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao","sistemas":"SEI; Tesouro Gerencial; Trello; Planilha","atividades":[{"texto":"Elaboracao de despacho","padrao":true},{"texto":"Envio de e-mail institucional","padrao":true},{"texto":"Emissao de relatorio gerencial","padrao":false},{"texto":"Preenchimento de planilha de controle","padrao":false},{"texto":"Tela de consulta no SIAFI ou Tesouro Gerencial","padrao":false},{"texto":"Registro no Trello","padrao":false},{"texto":"Participacao em alinhamento com a diretoria","padrao":false}]},{"tipo":"Controle e acompanhamento recursos especificos (TED/Emenda)","sistemas":"Planilha; Tesouro Gerencial; SIAFI; SIMEC; FNDE","atividades":[{"texto":"Preenchimento de planilha de controle TED/Emenda","padrao":true},{"texto":"Consulta de saldo disponivel no Tesouro Gerencial","padrao":true},{"texto":"Verificacao de liberacao de recurso no SIAFI","padrao":false},{"texto":"Preenchimento do sistema SIMEC","padrao":false},{"texto":"Preenchimento do sistema FNDE","padrao":false},{"texto":"Elaboracao de despacho de acompanhamento","padrao":false},{"texto":"E-mail de consulta ou informe sobre TED/Emenda","padrao":false}]},{"tipo":"Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)","sistemas":"SIAFI; SEFIP; DCTFWeb; eSocial; Portal RFB; Portal ISS","atividades":[{"texto":"Emissao de DARF","padrao":false},{"texto":"Lancamento no SEFIP/GFIP","padrao":false},{"texto":"Preenchimento e fechamento do EFD-Reinf","padrao":false},{"texto":"Transmissao da DCTFWeb","padrao":false},{"texto":"Recolhimento de GPS","padrao":false},{"texto":"Envio de IRRF ao fornecedor ou colaborador externo","padrao":false},{"texto":"Geracao e pagamento de guia de ISS","padrao":false},{"texto":"Conciliacao de obrigacoes tributarias","padrao":false},{"texto":"Elaboracao de despacho ou oficio tributario","padrao":false}]},{"tipo":"Elaboracao e revisao de fluxos de processos e manuais","sistemas":"SEI; Word; Drive","atividades":[{"texto":"Elaboracao de novo fluxo de processo","padrao":false},{"texto":"Revisao de manual ou procedimento existente","padrao":false},{"texto":"Participacao em reuniao de alinhamento para padronizacao","padrao":false},{"texto":"Elaboracao de despacho com solicitacao de aprovacao","padrao":false},{"texto":"Publicacao ou divulgacao do documento elaborado","padrao":false}]},{"tipo":"Envio de demandas (liquidacao e pagamento) para os campi","sistemas":"SEI; Planilha","atividades":[{"texto":"Conferencia do despacho decisorio","padrao":true},{"texto":"Conferencia da liquidacao","padrao":true},{"texto":"Preenchimento da planilha de acompanhamento","padrao":true},{"texto":"Despacho autorizando pagamento para o campus","padrao":true},{"texto":"Conferência dos comprovantes de pagamento recebidos do campus","padrao":false},{"texto":"Verificacao do SICAF valido","padrao":false},{"texto":"Conferencia dos comprovantes de liquido e retencoes","padrao":false},{"texto":"Encaminhamento para COERG apos conferencia","padrao":false},{"texto":"Envio de e-mail de comunicacao ao campus","padrao":false},{"texto":"Acompanhamento do retorno do campus","padrao":false}]},{"tipo":"Envio de IRRF aos fornecedores e colaboradores externos","sistemas":"E-mail; Planilha; SEI","atividades":[{"texto":"Emissao do comprovante de IRRF","padrao":true},{"texto":"Envio por e-mail ao fornecedor ou colaborador","padrao":true},{"texto":"Elaboracao de declaracao de rendimentos","padrao":false},{"texto":"Emissao de relatorio de retencoes","padrao":false},{"texto":"Registro no controle interno de IRRF enviados","padrao":false}]},{"tipo":"Gestao de Recursos Financeiros","sistemas":"SIAFI; Tesouro Gerencial; SEI","atividades":[{"texto":"Emissao de Nota de Lancamento (NL)","padrao":false},{"texto":"Emissao de Programacao Financeira (PF)","padrao":false},{"texto":"Emissao de Nota de Sistema (NS)","padrao":false},{"texto":"Consulta e acompanhamento de saldo financeiro","padrao":false},{"texto":"Envio de Comunica no SIAFI","padrao":false},{"texto":"Emissao de relatorio gerencial no Tesouro Gerencial","padrao":false},{"texto":"Elaboracao de despacho de gestao financeira","padrao":false}]},{"tipo":"Participacao em atividades","sistemas":"Teams; Presencial; Plataforma EAD","atividades":[{"texto":"Participacao em reuniao","padrao":false},{"texto":"Participacao em treinamento ou curso","padrao":false},{"texto":"Participacao em comissao ou grupo de trabalho","padrao":false},{"texto":"Elaboracao de ata ou lista de presenca","padrao":false},{"texto":"Registro de certificado ou declaracao","padrao":false}]},{"tipo":"Regularizacao de pagamento (OBs canceladas)","sistemas":"SIAFI; E-mail; Planilha","atividades":[{"texto":"Consulta das OBs canceladas no SIAFI","padrao":true},{"texto":"Preenchimento de planilha de controle das OBs","padrao":true},{"texto":"Emissao de lista de credores","padrao":true},{"texto":"E-mail de consulta ao campus ou fornecedor","padrao":false},{"texto":"Regularizacao da OB no SIAFI","padrao":false},{"texto":"Despacho de regularizacao no SEI","padrao":false}]}];
+var defaultConfig = [{"tipo": "Liquidacao (Reitoria)", "sistemas": "SIAFI; SICAF; Compranet; SEI; Planilha REINF", "atividades": [{"texto": "Consulta do SICAF", "padrao": true}, {"texto": "Consulta de saldo de empenho", "padrao": true}, {"texto": "Consulta do Simples Nacional", "padrao": true}, {"texto": "Conferência do Instrumento de Cobrança", "padrao": true}, {"texto": "Conferência de Despacho (Liquidação)", "padrao": true}, {"texto": "Apropriação da NF/FAT", "padrao": true}, {"texto": "Lançamento de encargo no drive REINF", "padrao": true}, {"texto": "Execução do DARF contábil INSS", "padrao": false}, {"texto": "Verificação Beneficiários / Lista de Credores", "padrao": false}, {"texto": "Geração de Lista de Credores", "padrao": false}, {"texto": "Liquidação SIAFI", "padrao": false}, {"texto": "Consulta de IRRF incidente", "padrao": false}, {"texto": "Encaminhamento para COERG", "padrao": false}, {"texto": "Verificação de saldo com coordenadora de orçamento (WhatsApp)", "padrao": false}, {"texto": "Despacho devolvendo processo para indicação de empenho com saldo", "padrao": false}]}, {"tipo": "Liquidacao de Bolsas (Reitoria)", "sistemas": "SIAFI; SEI; Planilha REINF; Planilha", "atividades": [{"texto": "Verificação dos beneficiários e lista de credores", "padrao": true}, {"texto": "Consulta de saldo de empenho", "padrao": true}, {"texto": "Geração de lista de credores", "padrao": true}, {"texto": "Liquidação SIAFI", "padrao": true}, {"texto": "Lançamento de encargo no drive REINF", "padrao": true}, {"texto": "Encaminhamento para COERG", "padrao": true}, {"texto": "Consulta de recurso TED/Emenda", "padrao": false}, {"texto": "Consulta de IRRF incidente", "padrao": false}, {"texto": "Execução do DARF contábil INSS", "padrao": false}, {"texto": "Verificação de saldo com coordenadora de orçamento (WhatsApp)", "padrao": false}, {"texto": "Despacho devolvendo processo para indicação de empenho com saldo", "padrao": false}]}, {"tipo": "Pagamento (Reitoria)", "sistemas": "SIAFI; SICAF; SEI; Planilha REINF", "atividades": [{"texto": "Conferência do Despacho Decisório", "padrao": true}, {"texto": "Conferência da Liquidação", "padrao": true}, {"texto": "Consulta do SICAF", "padrao": true}, {"texto": "Verificação de saldo e recurso TED/Emenda", "padrao": true}, {"texto": "Consulta de disponibilidade financeira", "padrao": true}, {"texto": "Pagamento da liquidação no SIAFI", "padrao": true}, {"texto": "Lançamento REINF (Pós-Pagamento)", "padrao": true}, {"texto": "Anexo dos comprovantes de pagamento", "padrao": true}, {"texto": "Despacho OB p/ COERG", "padrao": true}, {"texto": "Geração da Guia do ISS", "padrao": false}, {"texto": "Criação da Lista de Fatura do ISS", "padrao": false}, {"texto": "Lançamento Dedução Federal REINF", "padrao": false}, {"texto": "Conferência e Pagamento PCDPs (SIAFI)", "padrao": false}, {"texto": "Conferência NP lançada na planilha REINF e comunicação ao responsável", "padrao": false}, {"texto": "Comunicação de pendência de lançamento REINF ao responsável (WhatsApp)", "padrao": false}]}, {"tipo": "Pagamento de Bolsas (Reitoria)", "sistemas": "SIAFI; SEI; E-mail; Planilha REINF; Planilha", "atividades": [{"texto": "Confirmação de beneficiários / LCs", "padrao": true}, {"texto": "Conferência da liquidação", "padrao": true}, {"texto": "Fechamento das LCs", "padrao": true}, {"texto": "Verificação de recurso TED/Emenda", "padrao": true}, {"texto": "Pagamento da liquidação no SIAFI", "padrao": true}, {"texto": "Lançamento REINF (Pós-Pagamento)", "padrao": true}, {"texto": "Despacho OB p/ COERG", "padrao": true}, {"texto": "Informe do pagamento ao demandante (e-mail)", "padrao": false}, {"texto": "Anexo dos comprovantes de pagamento", "padrao": false}]}, {"tipo": "Autorização de Pagamento (Campus)", "sistemas": "SEI; SIAFI; Tesouro Gerencial; Planilha", "atividades": [{"texto": "Conferência do Despacho Decisório", "padrao": true}, {"texto": "Verificação de orçamento e saldo disponível", "padrao": true}, {"texto": "Verificação de recurso TED/Emenda", "padrao": true}, {"texto": "Despacho autorizando pagamento para o campus", "padrao": true}, {"texto": "Preenchimento da planilha de acompanhamento", "padrao": false}, {"texto": "Atribuição para equipe conferir", "padrao": false}, {"texto": "Comunicação ao campus sobre autorização", "padrao": false}]}, {"tipo": "Conferência do Retorno (Campus)", "sistemas": "SEI; SICAF; SIAFI; Planilha REINF; E-mail; WhatsApp", "atividades": [{"texto": "Conferência dos comprovantes de pagamento recebidos", "padrao": true}, {"texto": "Verificação do SICAF válido", "padrao": true}, {"texto": "Conferência dos comprovantes de líquido e retenções", "padrao": true}, {"texto": "Verificação do lançamento da NP na planilha REINF", "padrao": true}, {"texto": "Despacho encaminhando para COERG", "padrao": true}, {"texto": "Comunicação de pendências ao campus", "padrao": false}, {"texto": "Solicitação de correção ao campus", "padrao": false}, {"texto": "Encaminhamento para regularização", "padrao": false}, {"texto": "Comunicação de pendência de lançamento REINF ao responsável (WhatsApp)", "padrao": false}]}, {"tipo": "Triagem e Distribuição de Processos", "sistemas": "SEI; Planilha; E-mail; WhatsApp", "atividades": [{"texto": "Verificação do processo recebido no SEI", "padrao": true}, {"texto": "Análise da demanda (liquidação ou pagamento)", "padrao": true}, {"texto": "Atribuição para a equipe responsável", "padrao": true}, {"texto": "Verificação de documentação pendente", "padrao": false}, {"texto": "Comunicação ao campus sobre pendência", "padrao": false}, {"texto": "Devolução do processo com orientações", "padrao": false}, {"texto": "Registro na planilha de controle de processos", "padrao": false}]}, {"tipo": "Liquidação e Pagamento PCDP", "sistemas": "SIAFI; SEI", "atividades": [{"texto": "Verificação de PCDPs pendentes no SIAFI", "padrao": true}, {"texto": "Conferência da PCDP", "padrao": true}, {"texto": "Liquidação da PCDP no SIAFI", "padrao": true}, {"texto": "Pagamento da PCDP no SIAFI", "padrao": true}, {"texto": "Despacho encaminhando para COERG", "padrao": true}, {"texto": "Verificação de PCDPs — sem pendência", "padrao": false}]}, {"tipo": "Liquidação da Folha de Pessoal", "sistemas": "SIAFI; SEI; Planilha; Serpro", "atividades": [{"texto": "Preenchimento da planilha pré-lançamento SIAFI", "padrao": true}, {"texto": "Solicitação de recurso financeiro da folha no SIAFI", "padrao": true}, {"texto": "Consulta no Serpro", "padrao": false}, {"texto": "Conferência da programação financeira", "padrao": false}, {"texto": "Liquidação e pagamento do PASEP", "padrao": false}]}, {"tipo": "Pagamento da Folha de Pessoal", "sistemas": "SIAFI; SEI", "atividades": [{"texto": "Consulta da liberação do recurso financeiro", "padrao": true}, {"texto": "Anexo dos comprovantes de pagamento da folha", "padrao": true}, {"texto": "Despacho das OBs para COERG", "padrao": true}, {"texto": "Conferência da programação financeira", "padrao": false}]}, {"tipo": "Cumprimento de Obrigações Tributárias", "sistemas": "SIAFI; SEFIP; DCTFWeb; eSocial; Portal RFB; Portal ISS", "atividades": [{"texto": "Emissão de DARF", "padrao": false}, {"texto": "Lançamento no SEFIP/GFIP", "padrao": false}, {"texto": "Preenchimento e fechamento do EFD-Reinf", "padrao": false}, {"texto": "Transmissão da DCTFWeb", "padrao": false}, {"texto": "Recolhimento de GPS", "padrao": false}, {"texto": "Geração e pagamento de guia de ISS", "padrao": false}, {"texto": "Conciliação de obrigações tributárias", "padrao": false}, {"texto": "Elaboração de despacho ou ofício tributário", "padrao": false}]}, {"tipo": "Controle de Recursos Específicos (TED/Emenda)", "sistemas": "Planilha; SIAFI HOD; Tesouro Gerencial; SIMEC; FNDE", "atividades": [{"texto": "Preenchimento de planilha de controle TED/Emenda", "padrao": true}, {"texto": "Consulta de saldo disponível no Tesouro Gerencial", "padrao": true}, {"texto": "Verificação de liberação de recurso no SIAFI HOD", "padrao": false}, {"texto": "Preenchimento do sistema SIMEC", "padrao": false}, {"texto": "Preenchimento do sistema FNDE", "padrao": false}, {"texto": "Elaboração de despacho de acompanhamento", "padrao": false}, {"texto": "E-mail de consulta ou informe sobre TED/Emenda", "padrao": false}]}, {"tipo": "Regularização de Pagamento (OBs canceladas)", "sistemas": "SIAFI; SEI; E-mail; Planilha", "atividades": [{"texto": "Consulta das OBs canceladas no SIAFI", "padrao": true}, {"texto": "Preenchimento de planilha de controle das OBs", "padrao": true}, {"texto": "Emissão de lista de credores", "padrao": true}, {"texto": "E-mail de consulta ao campus ou fornecedor", "padrao": false}, {"texto": "Regularização da OB no SIAFI", "padrao": false}, {"texto": "Despacho de regularização no SEI", "padrao": false}]}, {"tipo": "Envio de IRRF aos Fornecedores e Colaboradores", "sistemas": "E-mail; SIAFI; Planilha; SEI", "atividades": [{"texto": "Emissão do comprovante de IRRF", "padrao": true}, {"texto": "Envio por e-mail ao fornecedor ou colaborador", "padrao": true}, {"texto": "Elaboração de declaração de rendimentos", "padrao": false}, {"texto": "Emissão de relatório de retenções", "padrao": false}, {"texto": "Registro no controle interno de IRRF enviados", "padrao": false}]}, {"tipo": "Gestão de Recursos Financeiros", "sistemas": "SIAFI; Tesouro Gerencial; SEI", "atividades": [{"texto": "Emissão de Nota de Lançamento (NL)", "padrao": false}, {"texto": "Emissão de Programação Financeira (PF)", "padrao": false}, {"texto": "Emissão de Nota de Sistema (NS)", "padrao": false}, {"texto": "Consulta e acompanhamento de saldo financeiro", "padrao": false}, {"texto": "Envio de Comunica no SIAFI", "padrao": false}, {"texto": "Emissão de relatório gerencial no Tesouro Gerencial", "padrao": false}, {"texto": "Elaboração de despacho de gestão financeira", "padrao": false}, {"texto": "Verificação de PCDPs — sem pendência", "padrao": false}]}, {"tipo": "Atendimento aos Campi e Setores", "sistemas": "E-mail; WhatsApp; SEI", "atividades": [{"texto": "Orientação técnica por e-mail", "padrao": true}, {"texto": "Orientação técnica por WhatsApp", "padrao": true}, {"texto": "Solicitação de correção de NP/RP ao campus", "padrao": true}, {"texto": "Solicitação de alteração ou inclusão de dedução federal/INSS", "padrao": false}, {"texto": "Atendimento presencial ou por videoconferência", "padrao": false}, {"texto": "Registro de atendimento em planilha de controle", "padrao": false}]}, {"tipo": "Atendimento aos Fornecedores", "sistemas": "E-mail; WhatsApp; SEI", "atividades": [{"texto": "Atendimento sobre pagamento pendente", "padrao": true}, {"texto": "Esclarecimento sobre retenções tributárias", "padrao": true}, {"texto": "Informe de previsão de pagamento", "padrao": false}, {"texto": "Solicitação de nota fiscal ou documentação faltante", "padrao": false}, {"texto": "Verificação de dados bancários do fornecedor", "padrao": false}]}, {"tipo": "Atendimento a Órgãos Externos", "sistemas": "SEI; E-mail; SIAFI", "atividades": [{"texto": "Elaboração de ofício ou despacho de resposta", "padrao": true}, {"texto": "Levantamento de informações solicitadas", "padrao": true}, {"texto": "Envio de documentação ao órgão externo", "padrao": false}, {"texto": "Registro e acompanhamento no SEI", "padrao": false}, {"texto": "Consulta ao setor jurídico ou superior", "padrao": false}]}, {"tipo": "Auxílio à DIRCF e PROAD", "sistemas": "SEI; Tesouro Gerencial; Trello; Planilha", "atividades": [{"texto": "Elaboração de despacho", "padrao": true}, {"texto": "Envio de e-mail institucional", "padrao": true}, {"texto": "Emissão de relatório gerencial", "padrao": false}, {"texto": "Preenchimento de planilha de controle", "padrao": false}, {"texto": "Tela de consulta no SIAFI ou Tesouro Gerencial", "padrao": false}, {"texto": "Registro no Trello", "padrao": false}, {"texto": "Participação em alinhamento com a diretoria", "padrao": false}]}, {"tipo": "Elaboração de Manuais e Fluxos", "sistemas": "SEI; Word; Drive", "atividades": [{"texto": "Elaboração de novo fluxo de processo", "padrao": false}, {"texto": "Revisão de manual ou procedimento existente", "padrao": false}, {"texto": "Participação em reunião de alinhamento para padronização", "padrao": false}, {"texto": "Elaboração de despacho com solicitação de aprovação", "padrao": false}, {"texto": "Publicação ou divulgação do documento elaborado", "padrao": false}]}, {"tipo": "Participação em Atividades", "sistemas": "Teams; Presencial; Plataforma EAD", "atividades": [{"texto": "Participação em reunião", "padrao": false}, {"texto": "Participação em treinamento ou curso", "padrao": false}, {"texto": "Participação em comissão ou grupo de trabalho", "padrao": false}, {"texto": "Elaboração de ata ou lista de presença", "padrao": false}, {"texto": "Registro de certificado ou declaração", "padrao": false}]}];
+var pitMap = {"Liquidacao (Reitoria)": "Atividades referentes a Liquidacao de Despesas", "Liquidacao de Bolsas (Reitoria)": "Atividades referentes a Liquidacao de Despesas", "Pagamento (Reitoria)": "Atividades referentes ao Pagamento de Despesas", "Pagamento de Bolsas (Reitoria)": "Atividades referentes ao Pagamento de Despesas", "Autorização de Pagamento (Campus)": "Envio de demandas (liquidacao e pagamento) para os campi", "Conferência do Retorno (Campus)": "Envio de demandas (liquidacao e pagamento) para os campi", "Liquidação da Folha de Pessoal": "Atividades referentes a liquidacao e pagamento da folha de pessoal", "Pagamento da Folha de Pessoal": "Atividades referentes a liquidacao e pagamento da folha de pessoal", "Cumprimento de Obrigações Tributárias": "Cumprimento de obrigacoes tributarias (SEFIP, FGTS, DARF, ISS, EFD-Reinf, DCTFweb)", "Controle de Recursos Específicos (TED/Emenda)": "Controle e acompanhamento recursos especificos (TED/Emenda)", "Regularização de Pagamento (OBs canceladas)": "Regularizacao de pagamento (OBs canceladas)", "Envio de IRRF aos Fornecedores e Colaboradores": "Envio de IRRF aos fornecedores e colaboradores externos", "Gestão de Recursos Financeiros": "Gestao de Recursos Financeiros", "Atendimento aos Campi e Setores": "Atendimento aos campi e setores quanto a orientacoes tecnicas", "Atendimento aos Fornecedores": "Atendimento aos fornecedores quanto aos pagamentos", "Atendimento a Órgãos Externos": "Atendimento as determinacoes e demandas de orgaos externos", "Auxílio à DIRCF e PROAD": "Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao", "Elaboração de Manuais e Fluxos": "Elaboracao e revisao de fluxos de processos e manuais", "Participação em Atividades": "Participacao em atividades", "Triagem e Distribuição de Processos": "Auxilio a Diretoria de Contabilidade e Financas e Pro-Reitoria de Administracao", "Liquidação e Pagamento PCDP": "Atividades referentes ao Pagamento de Despesas"};
 
 var defaultPit = [
   {titulo:"Atendimento aos campi e setores quanto a orientacoes tecnicas",tipo:"variavel",horas:7,peso:2},
@@ -448,7 +714,7 @@ var defaultPit = [
   {titulo:"Regularizacao de pagamento (OBs canceladas)",tipo:"fixa",horas:2,peso:1}
 ];
 
-var CONFIG_VERSION = '2026-03-18';
+var CONFIG_VERSION = '2026-03-19e';
 var storedVersion = localStorage.getItem('cofin_config_version');
 var config = (storedVersion === CONFIG_VERSION)
   ? (JSON.parse(localStorage.getItem(CONFIG_KEY)||'null') || defaultConfig)
@@ -543,7 +809,9 @@ function carregarConfigSheets(){
         setSyncStatus('ok','Sheets conectado');
       }
     } else {
-      // No config on Sheets yet - save current to Sheets
+      // No config on Sheets yet - save current default to Sheets
+      config = defaultConfig;
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
       sincronizarConfig();
       setSyncStatus('ok','Sheets conectado');
     }
@@ -562,6 +830,7 @@ function init(){
   popularSelect();
   renderHistorico();
   renderConfig();
+  renderMiniHistorico();
   setTimeout(function(){
     var alertas=verificarAlertas();
     var el=document.getElementById('alerta-pit');
@@ -649,6 +918,8 @@ function toggleSistemaTag(el){
 }
 
 function getSistemasSelected(){
+  var box = document.getElementById('sistemas-box');
+  if(!box || box.style.display==='none') return '';
   var tags=document.querySelectorAll('.sistemas-tag.sel');
   var sists=[];
   tags.forEach(function(t){sists.push(t.textContent);});
@@ -679,7 +950,7 @@ function salvarRegistro(){
     sei:document.getElementById('sei').value.trim(),
     data:document.getElementById('data').value,
     tipo:tipo,
-    tiposSecundarios:getTiposSecundarios(),
+
     atividades:ativs,
     sistemas:getSistemasSelected()||'',
     campus:document.getElementById('campus').value.trim(),
@@ -693,6 +964,7 @@ function salvarRegistro(){
   enviarSheets(reg);
   iaAtualizarSugestoes();
   acBuild();
+  renderMiniHistorico();
 }
 
 function limparForm(){
@@ -700,9 +972,7 @@ function limparForm(){
   document.getElementById('data').value=today();
   document.getElementById('tipo').value='';
   document.getElementById('complemento').value='';
-  document.getElementById('campus').value='';
-  document.querySelectorAll('.tipo-sec-check').forEach(function(c){c.checked=false;});
-  var tsl=document.getElementById('tipos-sec-list');if(tsl)tsl.style.display='none';
+  limparCampusTags();
   document.getElementById('detalhes').value='';
   document.getElementById('ativs-field').style.display='none';
   document.getElementById('comp-field').style.display='none';
@@ -715,6 +985,16 @@ function limparFiltros(){
   document.getElementById('f-ate').value='';
   document.getElementById('f-tipo').value='';
   document.getElementById('f-campus').value='';
+  document.querySelectorAll('#f-campus-tags .campus-tag.sel').forEach(function(t){t.classList.remove('sel');});
+  renderHistorico();
+}
+
+function toggleFiltroC(el, sigla){
+  el.classList.toggle('sel');
+  var sels = document.querySelectorAll('#f-campus-tags .campus-tag.sel');
+  var vals = [];
+  sels.forEach(function(s){vals.push(s.textContent.trim());});
+  document.getElementById('f-campus').value = vals.join('; ');
   renderHistorico();
 }
 
@@ -736,13 +1016,20 @@ function renderHistorico(){
   var fDe=document.getElementById('f-de')?document.getElementById('f-de').value:'';
   var fAte=document.getElementById('f-ate')?document.getElementById('f-ate').value:'';
   var fTipo=document.getElementById('f-tipo')?document.getElementById('f-tipo').value:'';
-  var fCampus=document.getElementById('f-campus')?document.getElementById('f-campus').value.toLowerCase():'';
+  var fCampusVal=document.getElementById('f-campus')?document.getElementById('f-campus').value:'';
+  var fCampus=fCampusVal.toLowerCase();
 
   var filtrados=registros.filter(function(r){
     if(fDe && r.data && r.data < fDe) return false;
     if(fAte && r.data && r.data > fAte) return false;
     if(fTipo && r.tipo !== fTipo) return false;
-    if(fCampus && (!r.campus || r.campus.toLowerCase().indexOf(fCampus)<0)) return false;
+    if(fCampus){
+      if(!r.campus) return false;
+      var campi = fCampusVal.split(';').map(function(c){return c.trim().toLowerCase();});
+      var regCampi = r.campus.toLowerCase();
+      var match = campi.some(function(c){return c && regCampi.indexOf(c)>=0;});
+      if(!match) return false;
+    }
     return true;
   });
 
@@ -779,13 +1066,7 @@ function renderHistorico(){
     html+='<button class="move-btn" onclick="moverItem(&quot;hist&quot;,-1,'+i+',-1)" title="Mover para cima">&#9650;</button>';
     html+='<button class="move-btn" onclick="moverItem(&quot;hist&quot;,-1,'+i+',1)" title="Mover para baixo">&#9660;</button>';
     html+='</div>';
-    html+='<div class="tp">'+r.tipo+syncBadge;
-    if(r.tiposSecundarios&&r.tiposSecundarios.length){
-      r.tiposSecundarios.forEach(function(t){
-        html+='<span style="font-size:10px;background:#f3e5f5;color:#6a1b9a;padding:1px 6px;border-radius:4px;margin-left:4px;font-weight:600">+'+t.split(' ').slice(0,3).join(' ')+'...</span>';
-      });
-    }
-    html+='</div>';
+    html+='<div class="tp">'+r.tipo+syncBadge+'</div>';
     html+='<div class="pc">'+(r.sei||'Sem processo SEI')+'</div>';
     html+='<div class="av">'+(r.atividades||'')+'</div>';
     html+='<div class="mt">';
@@ -794,6 +1075,14 @@ function renderHistorico(){
     if(r.sistemas) html+='<span>💻 '+r.sistemas+'</span>';
     if(r.detalhes) html+='<span>📄 '+r.detalhes+'</span>';
     html+='</div>';
+    if(r.sei){
+      var rel=registros.filter(function(x){return x.sei===r.sei&&x.id!==r.id;});
+      if(rel.length){
+        html+='<div style="margin-top:6px;padding:5px 8px;background:#f0f7ff;border-radius:6px;font-size:11px;color:#2E75B6">';
+        html+='<span style="font-weight:700">Mesmo processo: </span>'+rel.map(function(x){return x.tipo;}).join(' · ');
+        html+='</div>';
+      }
+    }
     html+='<div class="ac">';
     html+='<button class="btn-sm" onclick="abrirEdicao('+i+')">Editar</button>';
     if(!r.synced) html+='<button class="btn-sm s" onclick="reenviar('+i+')">Reenviar</button>';
@@ -818,7 +1107,7 @@ function abrirEdicao(i){
   document.getElementById('e-data').value=r.data||'';
   document.getElementById('e-tipo').value=r.tipo||'';
   document.getElementById('e-ativs').value=r.atividades||'';
-  document.getElementById('e-campus').value=r.campus||'';
+  document.getElementById('e-campus').value=r.campus||''; preencherCampusTags(r.campus||'');
   document.getElementById('e-sistemas').value=r.sistemas||'';
   document.getElementById('e-detalhes').value=r.detalhes||'';
   document.getElementById('edit-modal').classList.add('open');
@@ -1276,18 +1565,15 @@ function iaEnviar(){
 function onTipoChangeComIA(){
   onTipoChange();
   if(registros.length >= 2) iaAtualizarSugestoes();
-  // populate secondary types
-  var principal=document.getElementById('tipo').value;
-  var cont=document.getElementById('tipos-sec-list');
-  if(!cont) return;
-  var html='';
-  config.forEach(function(c){
-    if(c.tipo===principal) return;
-    html+='<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f5f5">';
-    html+='<input type="checkbox" class="tipo-sec-check" value="'+c.tipo+'" style="width:14px;height:14px;accent-color:#2E75B6">';
-    html+='<span>'+c.tipo+'</span></label>';
-  });
-  cont.innerHTML=html;
+  mostrarDetalheSugestoes();
+  var tiposSemPadrao = ["Autoriza\u00e7\u00e3o de Pagamento (Campus)", "Confer\u00eancia do Retorno (Campus)", "Triagem e Distribui\u00e7\u00e3o de Processos", "Atendimento aos Campi e Setores", "Atendimento aos Fornecedores", "Atendimento a \u00d3rg\u00e3os Externos"];
+  var tipoPrincipal = document.getElementById('tipo').value;
+  if(campusPadrao && tiposSemPadrao.indexOf(tipoPrincipal) < 0){
+    preencherCampusTags(campusPadrao);
+  } else if(tiposSemPadrao.indexOf(tipoPrincipal) >= 0){
+    limparCampusTags();
+  }
+
 }
 
 
@@ -1401,11 +1687,12 @@ function gerarRelatorio(){
   document.getElementById('rel-titulo').textContent='Relatorio — '+nomeMes;
   document.getElementById('rel-total').textContent=regs.length+' registro(s)';
 
-  // Group by tipo
+  // Group by PIT tipo (SUAP)
   var porTipo={};
   regs.forEach(function(r){
-    if(!porTipo[r.tipo]) porTipo[r.tipo]=[];
-    porTipo[r.tipo].push(r);
+    var pitTipo = (typeof pitMap !== 'undefined' && pitMap[r.tipo]) ? pitMap[r.tipo] : r.tipo;
+    if(!porTipo[pitTipo]) porTipo[pitTipo]=[];
+    porTipo[pitTipo].push(r);
   });
 
   var tipoHtml='';
@@ -1415,10 +1702,14 @@ function gerarRelatorio(){
     tipoHtml+='<div style="font-size:12px;font-weight:700;color:#2E75B6;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">'+tipo+' ('+itens.length+')</div>';
     itens.forEach(function(r){
       var df=r.data?r.data.split('-').reverse().join('/'):'';
-      tipoHtml+='<div style="font-size:12px;padding:4px 0;border-bottom:1px solid #f8f8f8;display:flex;gap:8px;flex-wrap:wrap">';
-      tipoHtml+='<span style="color:#aaa;min-width:70px">'+df+'</span>';
-      tipoHtml+='<span style="flex:1">'+r.atividades+'</span>';
-      if(r.sei) tipoHtml+='<span style="color:#888;font-size:11px">'+r.sei+'</span>';
+      tipoHtml+='<div style="font-size:12px;padding:6px 0;border-bottom:1px solid #f8f8f8">';
+      tipoHtml+='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:2px">';
+      tipoHtml+='<span style="color:#aaa;min-width:70px;font-weight:600">'+df+'</span>';
+      if(r.sei) tipoHtml+='<span style="font-weight:700;color:#1a1a1a">'+r.sei+'</span>';
+      if(r.campus) tipoHtml+='<span style="font-size:10px;background:#f0fdf4;color:#065f46;padding:1px 6px;border-radius:3px;font-weight:700">'+r.campus+'</span>';
+      if(r.detalhes) tipoHtml+='<span style="font-size:11px;background:#f5f5f5;color:#555;padding:1px 8px;border-radius:3px;font-weight:600">'+r.detalhes+'</span>';
+      tipoHtml+='</div>';
+      tipoHtml+='<div style="font-size:11px;color:#666;font-weight:600">'+r.atividades+'</div>';
       tipoHtml+='</div>';
     });
     tipoHtml+='</div>';
@@ -1606,7 +1897,9 @@ function getSistemasParaAtividades(ativsSelecionadas){
 
 // ── Memória de processo SEI ───────────────────────────────────
 function onSeiInput(){
-  var sei = document.getElementById('sei').value.trim();
+  var seiEl = document.getElementById('sei');
+  if(!seiEl) return;
+  var sei = seiEl.value.trim();
   var box = document.getElementById('sei-historico');
   if(sei.length < 8){box.classList.remove('show');return;}
   var matches = registros.filter(function(r){
@@ -1662,8 +1955,341 @@ function aplicarHistoricoSEI(i){
     });
     atualizarSistemas();
   },100);
+  if(m.campus) preencherCampusTags(m.campus);
   box.classList.remove('show');
   showToast('Preenchido com base no historico!');
+}
+
+
+// ── Campus selector ───────────────────────────────────────────
+function toggleCampus(el){
+  el.classList.toggle('sel');
+  atualizarCampusHidden();
+}
+
+function atualizarCampusHidden(){
+  var campusEl = document.getElementById('campus');
+  if(!campusEl) return;
+  var sels = document.querySelectorAll('#campus-tags .campus-tag.sel');
+  var vals = [];
+  sels.forEach(function(s){vals.push(s.textContent.trim());});
+  var extra = document.getElementById('campus-extra-input');
+  if(extra && extra.value.trim()) vals.push(extra.value.trim());
+  campusEl.value = vals.join('; ');
+}
+
+function toggleCampusExtra(){
+  var el = document.getElementById('campus-extra');
+  el.classList.toggle('show');
+  if(el.classList.contains('show')){
+    document.getElementById('campus-extra-input').focus();
+  }
+}
+
+function adicionarCampusExtra(){
+  var inp = document.getElementById('campus-extra-input');
+  var val = inp.value.trim();
+  if(!val) return;
+  // Check if already exists as tag
+  var exists = false;
+  document.querySelectorAll('.campus-tag').forEach(function(t){
+    if(t.textContent.trim().toUpperCase()===val.toUpperCase()){
+      t.classList.add('sel');exists=true;
+    }
+  });
+  if(!exists){
+    // Add new tag dynamically
+    var container = document.getElementById('campus-tags');
+    var addBtn = container.querySelector('.campus-add-btn');
+    var newTag = document.createElement('span');
+    newTag.className = 'campus-tag sel';
+    newTag.textContent = val.toUpperCase();
+    newTag.onclick = function(){toggleCampus(this);};
+    container.insertBefore(newTag, addBtn);
+  }
+  inp.value = '';
+  document.getElementById('campus-extra').classList.remove('show');
+  atualizarCampusHidden();
+  showToast('Campus adicionado!');
+}
+
+function limparCampusTags(){
+  document.querySelectorAll('.campus-tag.sel').forEach(function(t){t.classList.remove('sel');});
+  var inp = document.getElementById('campus-extra-input');
+  if(inp) inp.value = '';
+  document.getElementById('campus').value = '';
+  var extra = document.getElementById('campus-extra');
+  if(extra) extra.classList.remove('show');
+}
+
+function preencherCampusTags(valor){
+  limparCampusTags();
+  if(!valor) return;
+  var parts = valor.split(';').map(function(v){return v.trim();});
+  parts.forEach(function(p){
+    if(!p) return;
+    var found = false;
+    document.querySelectorAll('.campus-tag').forEach(function(t){
+      if(t.textContent.trim().toUpperCase()===p.toUpperCase()){
+        t.classList.add('sel');found=true;
+      }
+    });
+    if(!found && p){
+      var container = document.getElementById('campus-tags');
+      var addBtn = container.querySelector('.campus-add-btn');
+      var newTag = document.createElement('span');
+      newTag.className = 'campus-tag sel';
+      newTag.textContent = p.toUpperCase();
+      newTag.onclick = function(){toggleCampus(this);};
+      container.insertBefore(newTag, addBtn);
+    }
+  });
+  atualizarCampusHidden();
+}
+
+
+// ── Campus padrão ─────────────────────────────────────────────
+var campusPadrao = localStorage.getItem('cofin_campus_padrao') || '';
+
+function salvarCampusPadrao(){
+  var sels = document.querySelectorAll('.campus-tag.sel');
+  var vals = [];
+  sels.forEach(function(s){vals.push(s.textContent.trim());});
+  campusPadrao = vals.join('; ');
+  localStorage.setItem('cofin_campus_padrao', campusPadrao);
+  var lbl = document.getElementById('campus-padrao-label');
+  if(lbl) lbl.textContent = campusPadrao || 'Nenhum';
+  showToast('Campus padrão salvo!');
+}
+
+function aplicarCampusPadrao(){
+  if(campusPadrao) preencherCampusTags(campusPadrao);
+}
+
+// ── Sugestões de detalhes por tipo ───────────────────────────
+var detalheSugs = {"Liquidacao (Reitoria)": ["NP", "NS", "Despacho COFIN SEI n"], "Liquidacao de Bolsas (Reitoria)": ["RP", "NS", "Despacho COFIN SEI n"], "Pagamento (Reitoria)": ["NP", "OB", "Despacho COFIN SEI n"], "Pagamento de Bolsas (Reitoria)": ["RP", "OB", "Despacho COFIN SEI n"], "Autorização de Pagamento (Campus)": ["Despacho COFIN SEI n", "DT"], "Conferência do Retorno (Campus)": ["NP", "RP", "OB"], "Triagem e Distribuição de Processos": ["Processos analisados"], "Liquidação da Folha de Pessoal": ["Competência", "NS"], "Pagamento da Folha de Pessoal": ["Competência", "OB"], "Cumprimento de Obrigações Tributárias": ["DARF", "GPS", "Competência"], "Regularização de Pagamento (OBs canceladas)": ["OB", "DT"], "Envio de IRRF aos Fornecedores e Colaboradores": ["Informe", "Ano"], "Gestão de Recursos Financeiros": ["NL", "PF", "NS"]};
+
+function mostrarDetalheSugestoes(){
+  var tipoEl = document.getElementById('tipo');
+  if(!tipoEl) return;
+  var tipo = tipoEl.value;
+  var box = document.getElementById('detalhe-sugestoes');
+  if(!box) return;
+  var sugs = detalheSugs[tipo] || [];
+  if(!sugs.length){box.innerHTML='';return;}
+  box.innerHTML = sugs.map(function(s){
+    return '<span class="det-sug" onclick="aplicarDetalheSug(\''+s+'\')">'+s+'</span>';
+  }).join('');
+}
+
+function aplicarDetalheSug(sug){
+  var inp = document.getElementById('detalhes');
+  if(!inp) return;
+  var atual = inp.value.trim();
+  inp.value = atual ? atual + ' ' + sug + ' ' : sug + ' ';
+  inp.focus();
+  var pos = inp.value.length;
+  inp.setSelectionRange(pos, pos);
+}
+
+// ── Triagem rápida do dia ─────────────────────────────────────
+function registrarTriagemDia(){
+  var tipo = 'Triagem e Distribuição de Processos';
+  var cf = config.find(function(c){return c.tipo===tipo;});
+  if(!cf){showToast('Tipo de triagem não encontrado');return;}
+  var ativs = cf.atividades.filter(function(a){return a.padrao;}).map(function(a){return a.texto;}).join('; ');
+  var qtdEl = document.getElementById('triagem-qtd');
+  var qtd = qtdEl ? parseInt(qtdEl.value) || 1 : 1;
+  var now = new Date();
+  var hora = String(now.getHours()).padStart(2,'0') + 'h' + String(now.getMinutes()).padStart(2,'0');
+  var reg = {
+    id: Date.now(),
+    sei: '',
+    data: today(),
+    tipo: tipo,
+    atividades: ativs,
+    campus: campusPadrao || 'RT',
+    sistemas: 'SEI',
+    detalhes: hora + ' — ' + qtd + ' processo(s) analisado(s)',
+    synced: false
+  };
+  registros.unshift(reg);
+  saveRegs();
+  showToast('Triagem do dia registrada!');
+  enviarSheets(reg);
+  acBuild();
+}
+
+// ── Registro em lote ─────────────────────────────────────────
+var loteAtivo = false;
+
+function toggleLote(){
+  loteAtivo = !loteAtivo;
+  var el = document.getElementById('lote-section');
+  el.style.display = loteAtivo ? 'block' : 'none';
+  var btn = document.getElementById('lote-toggle-btn');
+  btn.textContent = loteAtivo ? 'Cancelar lote' : '+ Registro em lote';
+  if(loteAtivo) renderLoteRows();
+}
+
+function renderLoteRows(){
+  var tipoEl = document.getElementById('tipo');
+  if(!tipoEl) return;
+  var tipo = tipoEl.value;
+  var cont = document.getElementById('lote-rows');
+  if(!cont) return;
+  var rows = cont.querySelectorAll('.lote-row').length;
+  if(rows === 0) adicionarLoteRow();
+}
+
+function adicionarLoteRow(){
+  var cont = document.getElementById('lote-rows');
+  if(!cont) return;
+  var i = cont.querySelectorAll('.lote-row').length;
+  var tipoEl = document.getElementById('tipo');
+  var tipo = tipoEl ? tipoEl.value : '';
+  var sugs = (typeof detalheSugs !== 'undefined' && detalheSugs[tipo]) ? detalheSugs[tipo] : ['NP','RP','OB'];
+  var sugBtns = sugs.map(function(s){
+    return '<button class="det-sug" style="font-size:10px;padding:2px 6px" data-sug="'+s+'" onclick="preencherLoteDet(this)">+'+s+'</button>';
+  }).join('');
+  // campus tags for this row
+  var campusSiglasLote = ['RT','CCS','CBO','CRB','CXA','CSM','CTA','DIRCF','COERG','PROAD'];
+  var campusBtns = campusSiglasLote.map(function(s){
+    return '<span class="campus-tag" style="font-size:10px;padding:2px 8px" onclick="toggleLoteCampus(this)">'+s+'</span>';
+  }).join('');
+  var div = document.createElement('div');
+  div.className = 'lote-row';
+  div.innerHTML = '<div style="display:flex;gap:6px;align-items:center;width:100%;margin-bottom:4px">'
+    + '<input type="text" placeholder="SEI (opcional)" class="lote-sei" style="flex:1;min-width:120px" onblur="verificarSEILote(this)">'
+    + '<button class="btn-sm d" onclick="removerLoteRow(this)" style="flex-shrink:0;padding:4px 8px">x</button>'
+    + '</div>'
+    + '<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;width:100%;margin-bottom:4px">'
+    + campusBtns
+    + '</div>'
+    + '<div style="display:flex;gap:4px;align-items:center;width:100%">'
+    + sugBtns
+    + '<input type="text" placeholder="Detalhes..." class="lote-det" style="flex:1;min-width:80px">'
+    + '</div>';
+  cont.appendChild(div);
+}
+
+function preencherLoteDet(btn){
+  var sug = btn.getAttribute('data-sug') || '';
+  var inp = btn.parentElement.querySelector('input[type="text"]');
+  if(inp && sug){
+    var atual = inp.value.trim();
+    inp.value = atual ? atual + ' ' + sug + ' ' : sug + ' ';
+    inp.focus();
+  }
+}
+
+
+function verificarSEILote(inp){
+  var sei=inp.value.trim();
+  if(!sei||sei.length<8){inp.style.borderColor='';return;}
+  var existe=registros.some(function(r){return r.sei&&r.sei.indexOf(sei)>=0;});
+  inp.style.borderColor=existe?'#f59e0b':'#10b981';
+  inp.title=existe?'Este processo ja foi registrado antes':'';
+}
+function toggleLoteCampus(el){el.classList.toggle('sel');}
+function removerLoteRow(btn){var row=btn.closest('.lote-row');if(row)row.remove();}
+function salvarLote(){
+  var tipo = document.getElementById('tipo').value;
+  if(!tipo){showToast('Selecione o tipo de demanda');return;}
+  var ativs = getAtividades();
+  if(!ativs){showToast('Selecione ao menos uma atividade');return;}
+  var cf = config.find(function(c){return c.tipo===tipo;});
+  var sistemas = getSistemasSelected() || '';
+  var campus = document.getElementById('campus').value || '';
+  var rows = document.getElementById('lote-rows').querySelectorAll('.lote-row');
+  var salvos = 0;
+  rows.forEach(function(row, i){
+    var seiEl = row.querySelector('.lote-sei');
+    var detEl = row.querySelector('.lote-det');
+    var sei = seiEl ? seiEl.value.trim() : '';
+    var det = detEl ? detEl.value.trim() : '';
+    // get campus selected in this row
+    var rowCampusTags = row.querySelectorAll('.campus-tag.sel');
+    var rowCampus = [];
+    rowCampusTags.forEach(function(t){rowCampus.push(t.textContent.trim());});
+    var rowCampusVal = rowCampus.length ? rowCampus.join('; ') : campus;
+    var reg = {
+      id: Date.now() + i,
+      sei: sei,
+      data: today(),
+      tipo: tipo,
+      atividades: ativs,
+      campus: rowCampusVal,
+      sistemas: sistemas,
+      detalhes: det,
+      synced: false
+    };
+    registros.unshift(reg);
+    enviarSheets(reg);
+    salvos++;
+  });
+  saveRegs();
+  acBuild();
+  toggleLote();
+  limparForm();
+  showToast(salvos + ' registros salvos!');
+}
+
+
+function irHistorico(){
+  var btn = document.querySelector('.tab:nth-child(2)');
+  if(btn) showTab('historico', btn);
+}
+
+function renderMiniHistorico(){
+  var hoje = today();
+  var deHoje = registros.filter(function(r){return r.data===hoje;});
+  var label = document.getElementById('mini-hist-label');
+  var lista = document.getElementById('mini-hist-lista');
+  if(!label || !lista) return;
+  label.textContent = 'Hoje — ' + deHoje.length + ' registro' + (deHoje.length!==1?'s':'');
+  if(!deHoje.length){
+    lista.innerHTML = '<div style="font-size:12px;color:#ccc;font-weight:600;padding:8px 0">Nenhum registro hoje ainda.</div>';
+    return;
+  }
+  // Color per tipo
+  var cores = {
+    'Triagem': '#134E4A',
+    'Liquidacao': '#0B6E4F',
+    'Pagamento': '#0B6E4F',
+    'Autorizacao': '#7c3aed',
+    'Conferencia': '#7c3aed',
+  };
+  function getColor(tipo){
+    var t = tipo || '';
+    if(t.indexOf('Triagem')>=0) return '#134E4A';
+    if(t.indexOf('Autorizacao')>=0||t.indexOf('Autorização')>=0||t.indexOf('Campus')>=0) return '#7c3aed';
+    if(t.indexOf('Liquidac')>=0||t.indexOf('Liquidaç')>=0) return '#1D9E75';
+    return '#0B6E4F';
+  }
+  var html = '';
+  deHoje.slice(0,5).forEach(function(r){
+    var cor = getColor(r.tipo);
+    var ativResumido = (r.atividades||'').split(';').slice(0,3).map(function(a){return a.trim();}).join('; ');
+    var meta = [];
+    if(r.campus) meta.push(r.campus);
+    if(r.detalhes) meta.push(r.detalhes);
+    html += '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:0.5px solid #f0f0f0">';
+    html += '<div style="width:8px;height:8px;border-radius:50%;background:'+cor+';flex-shrink:0;margin-top:4px"></div>';
+    html += '<div style="flex:1;min-width:0">';
+    html += '<div style="font-size:10px;font-weight:700;color:'+cor+';text-transform:uppercase;letter-spacing:0.5px">'+r.tipo+'</div>';
+    html += '<div style="font-size:13px;font-weight:800;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.sei||ativResumido.split(';')[0])+'</div>';
+    html += '<div style="font-size:11px;color:#888;font-weight:600;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+ativResumido+'</div>';
+    html += '</div>';
+    html += '<div style="font-size:10px;color:#ccc;font-weight:600;text-align:right;white-space:nowrap;flex-shrink:0">';
+    html += (meta.join(' · '));
+    if(r.synced) html += '<br><span style="color:#0B6E4F;font-size:9px;font-weight:700">● Sheets</span>';
+    html += '</div></div>';
+  });
+  if(deHoje.length > 5){
+    html += '<div style="font-size:11px;color:#aaa;font-weight:600;padding:6px 0 0;text-align:center">+ '+(deHoje.length-5)+' mais</div>';
+  }
+  lista.innerHTML = html;
 }
 
 function pitCalc(){
