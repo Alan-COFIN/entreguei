@@ -712,13 +712,37 @@ var defaultPit = [
   {titulo:"Regularizacao de pagamento (OBs canceladas)",tipo:"fixa",horas:2,peso:1}
 ];
 
-var CONFIG_VERSION = '2026-03-19e';
+var CONFIG_VERSION = '2026-03-20a';
 var storedVersion = localStorage.getItem('cofin_config_version');
 var storedConfig = JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');
-// Never reset user's custom config when version changes
-// Just use what's stored, or defaultConfig if nothing stored
-var config = storedConfig || defaultConfig;
-if(!storedVersion){
+
+// Valida se uma config está íntegra (detecta encoding corrompido e config do pitMap)
+function configIntegra(arr){
+  if(!arr || !arr.length) return false;
+  var joined = arr.map(function(c){return c.tipo||'';}).join('');
+  // Detecta UTF-8 mal decodificado: "Ã§", "Ã£", etc.
+  if(joined.indexOf('\u00c3')>=0 || joined.indexOf('Ã')>=0 || joined.indexOf('\uFFFD')>=0) return false;
+  // Verifica se tem pelo menos um tipo real do sistema (não nomes do pitMap)
+  var temTipoReal = arr.some(function(c){
+    return c.tipo && (
+      c.tipo.indexOf('(Reitoria)')>=0 ||
+      c.tipo.indexOf('(Campus)')>=0 ||
+      c.tipo.indexOf('PCDP')>=0
+    );
+  });
+  return temTipoReal;
+}
+
+// Se storedConfig está corrompida ou inválida, descarta e usa defaultConfig
+var config;
+if(storedConfig && configIntegra(storedConfig)){
+  config = storedConfig;
+} else {
+  config = defaultConfig;
+  localStorage.removeItem(CONFIG_KEY);
+  localStorage.removeItem('cofin_config_version');
+}
+if(!storedVersion || !configIntegra(storedConfig)){
   localStorage.setItem('cofin_config_version', CONFIG_VERSION);
 }
 var registros = JSON.parse(localStorage.getItem(REG_KEY)||'[]');
@@ -797,29 +821,19 @@ function carregarConfigSheets(){
     if(d.status==='ok' && d.config){
       try{
         var remoto = JSON.parse(d.config);
-        // Valida se a config remota está íntegra (verifica encoding de acentos)
-        function configValida(arr){
-          if(!arr || !arr.length) return false;
-          // Checa se pelo menos um tipo contém caractere acentuado esperado
-          // Config corrompida teria "DistribuiÃ§Ã£o" em vez de "Distribuição"
-          var joined = arr.map(function(c){return c.tipo||'';}).join('');
-          // Se tiver sequência típica de UTF-8 mal decodificado, rejeita
-          if(joined.indexOf('Ã')>=0 || joined.indexOf('â€')>=0) return false;
-          return true;
-        }
-        if(remoto && remoto.length && configValida(remoto)){
+        if(remoto && remoto.length && configIntegra(remoto)){
           config = remoto;
           localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
           localStorage.setItem('cofin_config_version', CONFIG_VERSION);
           popularSelect();
           renderConfig();
           setSyncStatus('ok','Config sincronizada');
-      var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
-        } else if(remoto && remoto.length && !configValida(remoto)){
-          // Config corrompida no Sheets — usa local e reempurra a correta
-          setSyncStatus('ok','Config local restaurada');
+          var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
+        } else if(remoto && remoto.length && !configIntegra(remoto)){
+          // Config corrompida no Sheets — mantém local correta e reempurra
+          setSyncStatus('ok','Config local (Sheets corrompido — restaurando)');
           sincronizarConfig();
-      var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
+          var lo=document.getElementById('loading-overlay');if(lo)lo.style.display='none';
         }
       }catch(e){
         setSyncStatus('ok','Sheets conectado');
@@ -1948,12 +1962,10 @@ function aplicarDetalheSug(sug){
 // ── Triagem rápida do dia ─────────────────────────────────────
 function registrarTriagemDia(){
   var tipo = 'Triagem e Distribuição de Processos';
-  // Busca tolerante: compara normalizando acentos para evitar problema de encoding
-  function normaliza(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
-  var tipoNorm = normaliza(tipo);
-  var cf = config.find(function(c){ return normaliza(c.tipo||'')===tipoNorm; });
-  // Se não achou na config atual, tenta no defaultConfig (fallback seguro)
-  if(!cf){ cf = defaultConfig.find(function(c){ return normaliza(c.tipo||'')===tipoNorm; }); }
+  function normTipo(s){ return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
+  var tipoNorm = normTipo(tipo);
+  var cf = config.find(function(c){ return normTipo(c.tipo)===tipoNorm; });
+  if(!cf){ cf = defaultConfig.find(function(c){ return normTipo(c.tipo)===tipoNorm; }); }
   if(!cf){showToast('Tipo de triagem não encontrado');return;}
   var ativs = cf.atividades.filter(function(a){return a.padrao;}).map(function(a){return a.texto;}).join('; ');
   var qtdEl = document.getElementById('triagem-qtd');
